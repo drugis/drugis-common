@@ -4,7 +4,7 @@
 	<groupId>org.drugis</groupId>
 	<artifactId>common</artifactId>
 	<name>drugis.org common</name>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 
 	<repositories>
 	</repositories>
