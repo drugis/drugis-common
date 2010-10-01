@@ -2,7 +2,8 @@ package org.drugis.common;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import com.jgoodies.binding.beans.Observable;
 
@@ -11,12 +12,16 @@ import com.jgoodies.binding.beans.Observable;
  */
 public class ObserverManager {
 	private Observable d_source;
-	private ConcurrentLinkedQueue<PropertyChangeListener> d_listeners = new ConcurrentLinkedQueue<PropertyChangeListener>();
+	private Collection<PropertyChangeListener> d_listeners = createCollection();
 	
 	public ObserverManager(Observable source) {
 		d_source = source;
 	}
 	
+	protected Collection<PropertyChangeListener> createCollection() {
+		return new LinkedList<PropertyChangeListener>();
+	}
+
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		d_listeners.add(listener);
 	}
