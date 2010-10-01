@@ -79,7 +79,7 @@ public class SuspendableThreadWrapper {
 	
 	private void resumeThread() {
 		Suspendable susRunnable = (Suspendable) d_runnable;
-		if (susRunnable.isThreadSuspended())
+		if (susRunnable.isSuspended())
 			susRunnable.wakeUp();
 		else {
 			throw new RuntimeException("Thread already running.");
