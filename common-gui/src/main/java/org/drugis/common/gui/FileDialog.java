@@ -60,6 +60,7 @@ public abstract class FileDialog {
 
 	static File d_currentDirectory = null;
 	protected JFileChooser d_fileChooser;
+	private boolean d_lastSuccess = true;
     
     public static String fixExtension(String absPath, String ext) {
     	if (ext == null || ext.equals("")) {
@@ -70,6 +71,10 @@ public abstract class FileDialog {
     	}
     	return absPath + "." + ext;
     }
+    
+	protected void setLastSuccess(boolean lastSuccess) {
+		d_lastSuccess = lastSuccess;
+	}
 
     public FileDialog(Component frame, String extension, String description){
     	this(frame, new String [] {extension}, new String [] {description});
@@ -99,11 +104,16 @@ public abstract class FileDialog {
 			try {
 				doAction(path, extension);
 			} catch (Exception e1) {
+				d_lastSuccess = false;
 				JOptionPane.showMessageDialog(frame, message + "\n" +
 						d_fileChooser.getSelectedFile().getAbsolutePath());
 				e1.printStackTrace();
 			}
 		}
+	}
+	
+	public boolean getLastSuccess() {
+		return d_lastSuccess;
 	}
 
 	private String getExtension() {
