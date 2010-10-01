@@ -91,6 +91,19 @@ public class JUnitUtil {
 		return mock;
 	}
 	
+	 public static PropertyChangeListener mockMultipleCallListener(Object source,
+			 String propertyName, Object oldValue, Object newValue) {
+			 PropertyChangeListener mock = createMock(PropertyChangeListener.class);
+			 PropertyChangeEvent event = new PropertyChangeEvent(
+			 source, propertyName, oldValue, newValue);
+			 mock.propertyChange(eqPropertyChangeEvent(event));
+			 expectLastCall().atLeastOnce();
+			 mock.propertyChange(not(eqPropertyChangeEvent(event)));
+			 expectLastCall().anyTimes();
+			 replay(mock);
+			 return mock;
+	 }
+	
 	public static PropertyChangeListener mockStrictListener(Object source,
 			String propertyName, Object oldValue, Object newValue) {
 		PropertyChangeListener mock = createMock(PropertyChangeListener.class);
