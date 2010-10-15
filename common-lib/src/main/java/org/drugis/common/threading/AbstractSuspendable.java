@@ -22,7 +22,7 @@ public abstract class AbstractSuspendable implements Suspendable  {
 		notify();
 	}
 	
-	public void terminate() {
+	public void abort() {
 		d_threadTerminated = true;
 		wakeUp();
 	}
@@ -34,7 +34,7 @@ public abstract class AbstractSuspendable implements Suspendable  {
 		return d_threadTerminated;
 	}
 	
-	protected void waitIfSuspended() throws TerminatedException {
+	protected void waitIfSuspended() throws AbortedException {
 		while(isSuspended()) {
 			synchronized(this) {
 				try {
@@ -45,7 +45,7 @@ public abstract class AbstractSuspendable implements Suspendable  {
 		}
 
 		if (isTerminated()) {
-			throw new TerminatedException();
+			throw new AbortedException();
 		}
 	}
 }

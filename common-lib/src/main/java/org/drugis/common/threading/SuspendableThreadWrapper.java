@@ -65,7 +65,7 @@ public class SuspendableThreadWrapper {
 		if (d_thread == null)
 			return true;
 		else if (d_runnable instanceof Suspendable) {
-			((Suspendable) d_runnable).terminate();
+			((Suspendable) d_runnable).abort();
 			return true;
 		}
 		

@@ -22,5 +22,5 @@ public interface Suspendable extends Runnable {
 	/**
 	 * Request the run to be terminated.
 	 */
-	public void terminate();
+	public void abort();
 }
