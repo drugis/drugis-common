@@ -377,9 +377,44 @@ public class ThreadHandlerIT {
 		sleepLongEnough();
 		sleepLongEnough();
 		sleepLongEnough();
+		sleepLongEnough();
 		assertTrue(task.d_last.isFinished());
 		assertTrue(task.isFinished());
 		assertEquals(Collections.<Task>emptyList(), threadHandler.getScheduledTasks());
+	}
+	
+	@Test
+	public void testScheduleCompositeTaskWithDuplicateTask() {
+		ThreadHandler threadHandler = ThreadHandler.getInstance();
+		SomeCompositeTask task = new SomeCompositeTask();
+		SimpleTask duplicate = task.d_first;
+		
+		threadHandler.scheduleTask(duplicate);
+		threadHandler.scheduleTask(task);
+		
+		sleepLongEnough();
+		List<Task> expected = new ArrayList<Task>();
+		expected.add(task);
+		expected.add(duplicate);
+		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
+		assertEquals(expected, threadHandler.getScheduledTasks());
+	}
+	
+	@Test
+	public void testScheduleCompositeTaskWithDuplicateTaskVV() {
+		ThreadHandler threadHandler = ThreadHandler.getInstance();
+		SomeCompositeTask task = new SomeCompositeTask();
+		SimpleTask duplicate = task.d_first;
+		
+		threadHandler.scheduleTask(task);
+		threadHandler.scheduleTask(duplicate);
+		
+		sleepLongEnough();
+		List<Task> expected = new ArrayList<Task>();
+		expected.add(duplicate);
+		expected.add(task);
+		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
+		assertEquals(expected, threadHandler.getScheduledTasks());
 	}
 	
 	public static void waitTillDone() {

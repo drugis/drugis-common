@@ -95,14 +95,14 @@ public class ThreadHandler extends AbstractObservable {
 			if (task.isFinished()) {
 				d_scheduledTasks.remove(i);
 			} else if (task instanceof SimpleTask) {
-				toRun.add((SimpleTask)d_scheduledTasks.get(i));
+				add(toRun, (SimpleTask)d_scheduledTasks.get(i));
 				++i;
 			} else if (task instanceof CompositeTask) {
 				CompositeTask compositeTask = (CompositeTask)task;
 				compositeTask.start();
 				List<SimpleTask> next = compositeTask.getNextTasks();
 				for (int j = 0; j < next.size() && toRun.size() < n; ++j) {
-					toRun.add(next.get(j));
+					add(toRun, next.get(j));
 				}
 				++i;
 			} else {
@@ -110,6 +110,17 @@ public class ThreadHandler extends AbstractObservable {
 			}
 		}
 		return getWrappers(toRun);
+	}
+
+	/**
+	 * Add only if unique.
+	 * @param toRun
+	 * @param simpleTask
+	 */
+	private void add(List<SimpleTask> toRun, SimpleTask simpleTask) {
+		if (!toRun.contains(simpleTask)) {
+			toRun.add(simpleTask);
+		}
 	}
 
 	public static ThreadHandler getInstance() {
