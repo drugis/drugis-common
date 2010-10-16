@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.*;
 
 import java.beans.PropertyChangeListener;
 
+import org.drugis.common.beans.ObserverManager;
 import org.junit.Test;
 
 import com.jgoodies.binding.beans.Observable;

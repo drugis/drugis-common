@@ -1,4 +1,4 @@
-package org.drugis.common;
+package org.drugis.common.beans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
