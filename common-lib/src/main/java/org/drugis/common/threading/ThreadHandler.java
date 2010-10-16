@@ -62,6 +62,8 @@ public class ThreadHandler extends AbstractObservable {
 						t.start();
 						d_runningTasks.add(t);
 					}
+					firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
+					firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 				}
 				try {
 					Thread.sleep(200);
@@ -73,14 +75,14 @@ public class ThreadHandler extends AbstractObservable {
 	} 
 
 	private final int d_numCores;
-	LinkedList<SimpleTask> d_scheduledTasks;
+	LinkedList<Task> d_scheduledTasks;
 	LinkedList<SuspendableThreadWrapper> d_runningTasks;
 	Thread d_cleaner;
 	private static ThreadHandler d_singleton;
 	
 	private ThreadHandler() {
 		d_numCores = Runtime.getRuntime().availableProcessors();
-		d_scheduledTasks = new LinkedList<SimpleTask>();
+		d_scheduledTasks = new LinkedList<Task>();
 		d_runningTasks = new LinkedList<SuspendableThreadWrapper>();
 		d_cleaner = new Thread(new RunQueueCleaner());
 		d_cleaner.start();
@@ -88,13 +90,23 @@ public class ThreadHandler extends AbstractObservable {
 	
 	public List<SuspendableThreadWrapper> getThreadsToRun(int n) {
 		List<SimpleTask> toRun = new ArrayList<SimpleTask>(n);
-		for (int i = 0; i < n && i < d_scheduledTasks.size(); ) {
-			SimpleTask task = (SimpleTask)d_scheduledTasks.get(i);
+		for (int i = 0; toRun.size() < n && i < d_scheduledTasks.size(); ) {
+			Task task = d_scheduledTasks.get(i);
 			if (task.isFinished()) {
 				d_scheduledTasks.remove(i);
-			} else {
-				toRun.add(d_scheduledTasks.get(i));
+			} else if (task instanceof SimpleTask) {
+				toRun.add((SimpleTask)d_scheduledTasks.get(i));
 				++i;
+			} else if (task instanceof CompositeTask) {
+				CompositeTask compositeTask = (CompositeTask)task;
+				compositeTask.start();
+				List<SimpleTask> next = compositeTask.getNextTasks();
+				for (int j = 0; j < next.size() && toRun.size() < n; ++j) {
+					toRun.add(next.get(j));
+				}
+				++i;
+			} else {
+				throw new RuntimeException("Unhandled Task type: " + task.getClass().getName());
 			}
 		}
 		return getWrappers(toRun);
@@ -114,19 +126,23 @@ public class ThreadHandler extends AbstractObservable {
 		return d_scheduledTasks.size();
 	}
 	
-	public void scheduleTask(SimpleTask r) {
+	public void scheduleTask(Task r) {
 		scheduleTasks(Collections.singleton(r));
 	}
 	
-	public synchronized void scheduleTasks(Collection<SimpleTask> newTasks) {
+	/**
+	 * Schedule tasks for execution. May also be used to re-prioritize already scheduled tasks (the new ones get highest prio).
+	 * @param newTasks tasks to schedule.
+	 */
+	public synchronized void scheduleTasks(Collection<? extends Task> newTasks) {
 		synchronized (d_runningTasks) {
-			// If tasks already present, reschedule to running or to head of queue
+			// If tasks already present, reschedule
 			d_scheduledTasks.removeAll(newTasks);
 
+			// Put new tasks at the front of the queue
 			d_scheduledTasks.addAll(0, newTasks);
 			
 			firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
-			firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 		}
 	}
 	
@@ -161,8 +177,8 @@ public class ThreadHandler extends AbstractObservable {
 		}
 	}
 	
-	protected List<SimpleTask> getRunningTasks() {
-		List<SimpleTask> tasks = new ArrayList<SimpleTask>();
+	protected List<Task> getRunningTasks() {
+		List<Task> tasks = new ArrayList<Task>();
 		synchronized(d_runningTasks) {
 			for (SuspendableThreadWrapper w : d_runningTasks) {
 				tasks.add((SimpleTask)w.getRunnable());
@@ -171,7 +187,7 @@ public class ThreadHandler extends AbstractObservable {
 		return tasks;
 	}
 	
-	protected List<SimpleTask> getScheduledTasks() {
+	protected List<Task> getScheduledTasks() {
 		return Collections.unmodifiableList(d_scheduledTasks);
 	}
 

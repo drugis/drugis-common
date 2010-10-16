@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -310,6 +311,75 @@ public class ThreadHandlerIT {
 		
 		sleepLongEnough();
 		assertEquals(0, th.getRunningThreads());
+	}
+	
+	class SomeCompositeTask implements CompositeTask {
+		boolean d_started = false;
+		
+		SimpleTask d_first = new SimpleSuspendableTask(new SuspendableTestThread(300));
+		SimpleTask d_middle1 = new SimpleSuspendableTask(new SuspendableTestThread(300));
+		SimpleTask d_middle2 = new SimpleSuspendableTask(new SuspendableTestThread(300));
+		SimpleTask d_last = new SimpleSuspendableTask(new SuspendableTestThread(300));
+		
+		public List<SimpleTask> getNextTasks() {
+			if (!d_started) {
+				throw new RuntimeException("Can't get tasks if not started");
+			} else if (!d_first.isFinished()) {
+				return Collections.singletonList(d_first);
+			} else if (!d_middle1.isFinished() || !d_middle2.isFinished()) {
+				List<SimpleTask> list = new ArrayList<SimpleTask>();
+				if (!d_middle1.isFinished()) list.add(d_middle1);
+				if (!d_middle2.isFinished()) list.add(d_middle2);
+				return list ;
+			} else if (!d_last.isFinished()) {
+				return Collections.singletonList(d_last);
+			} else {
+				return Collections.<SimpleTask>emptyList();
+			}
+		}
+
+		public void start() {
+			d_started = true;
+		}
+
+		public boolean isStarted() {
+			return d_started;
+		}
+
+		public boolean isFinished() {
+			return d_last.isFinished();
+		}
+
+		public void addTaskListener(TaskListener l) {}
+		public void removeTaskListener(TaskListener l) {}
+		public boolean isFailed() { return false; }
+		public Throwable getFailureCause() { return null; }
+		public boolean isAborted() { return false; }
+		
+	}
+	
+	@Test
+	public void testScheduleCompositeTask() {
+		ThreadHandler threadHandler = ThreadHandler.getInstance();
+		SomeCompositeTask task = new SomeCompositeTask();
+		threadHandler.scheduleTask(task);
+		
+		sleepLongEnough();
+		assertEquals(Collections.singletonList(task.d_first), threadHandler.getRunningTasks());
+		assertEquals(Collections.singletonList(task), threadHandler.getScheduledTasks());
+		
+		sleepLongEnough();
+		List<Task> expected = new ArrayList<Task>();
+		expected.add(task.d_middle1);
+		expected.add(task.d_middle2);
+		assertEquals(expected, threadHandler.getRunningTasks());
+		
+		sleepLongEnough();
+		sleepLongEnough();
+		sleepLongEnough();
+		assertTrue(task.d_last.isFinished());
+		assertTrue(task.isFinished());
+		assertEquals(Collections.<Task>emptyList(), threadHandler.getScheduledTasks());
 	}
 	
 	public static void waitTillDone() {
