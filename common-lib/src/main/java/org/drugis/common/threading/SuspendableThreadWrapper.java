@@ -28,48 +28,51 @@ import org.drugis.common.threading.Suspendable;
 
 public class SuspendableThreadWrapper {
 	private Thread d_thread;
-	private final Runnable d_runnable;
+	private final Suspendable d_runnable;
 
-	public SuspendableThreadWrapper(Runnable runnable) {
+	public SuspendableThreadWrapper(Suspendable runnable) {
 		d_runnable = runnable;
 	}
 	
+	public SuspendableThreadWrapper(Runnable runnable) {
+		this(wrap(runnable));
+	}
+	
+	private static Suspendable wrap(Runnable runnable) {
+		if (runnable instanceof Suspendable) {
+			return (Suspendable)runnable;
+		}
+		return new NonSuspendable(runnable);
+	}
+
 	public synchronized void start() {
 		if (d_thread == null) {
 			startAsNewThread();
-		} else if (d_runnable instanceof Suspendable) {
-			resumeThread();
 		} else {
-			throw new RuntimeException("Thread already running and not suspendable.");
+			resumeThread();
 		}
 	}
 	
 	public synchronized boolean suspend() {
 		if (d_thread == null) {
 			throw new IllegalStateException("Thread not started yet");
-		} else if (d_runnable instanceof Suspendable) {
-			((Suspendable) d_runnable).suspend();
-			return true;
 		} else {
-			return false;
+			return d_runnable.suspend();
 		}
 	}
 
 	public boolean isTerminated() {
 		if (d_thread == null)
 			return false;
-		return d_thread.getState() == State.TERMINATED ;
+		return d_thread.getState() == State.TERMINATED;
 	}
 	
 	public boolean terminate() {
 		if (d_thread == null)
 			return true;
-		else if (d_runnable instanceof Suspendable) {
-			((Suspendable) d_runnable).abort();
-			return true;
+		else {
+			return d_runnable.abort();
 		}
-		
-		return false;
 	}
 	
 	private void startAsNewThread() {
@@ -78,12 +81,11 @@ public class SuspendableThreadWrapper {
 	}
 	
 	private void resumeThread() {
-		Suspendable susRunnable = (Suspendable) d_runnable;
-		if (susRunnable.isSuspended())
-			susRunnable.wakeUp();
-		else {
+		if (d_runnable.isSuspended()) {
+			d_runnable.wakeUp();
+		} /*else {
 			throw new RuntimeException("Thread already running.");
-		}
+		}*/
 	}
 	
 	public Runnable getRunnable() {

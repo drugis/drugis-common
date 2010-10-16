@@ -11,16 +11,19 @@ public interface Suspendable extends Runnable {
 
 	/**
 	 * Request the run to be suspended.
+	 * @return false if not suspendable.
 	 */
-	public void suspend();
+	public boolean suspend();
 
 	/**
 	 * Request the run to be taken out of suspension.
+	 * @return false if not suspendable.
 	 */
-	public void wakeUp();
+	public boolean wakeUp();
 
 	/**
 	 * Request the run to be terminated.
+	 * @return false if not suspendable.
 	 */
-	public void abort();
+	public boolean abort();
 }

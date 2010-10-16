@@ -15,6 +15,17 @@ public class SimpleSuspendableTask implements SimpleTask {
 		d_suspendable = suspendable;
 		d_mgr = new ListenerManager(this);
 	}
+	
+	public SimpleSuspendableTask(Runnable runnable) {
+		this(wrap(runnable));
+	}
+
+	private static Suspendable wrap(Runnable runnable) {
+		if (runnable instanceof Suspendable) {
+			return (Suspendable)runnable;
+		}
+		return new NonSuspendable(runnable);
+	}
 
 	public void addTaskListener(TaskListener l) {
 		d_mgr.addTaskListener(l);
@@ -68,16 +79,16 @@ public class SimpleSuspendableTask implements SimpleTask {
 		return d_suspendable.isSuspended();
 	}
 
-	public void suspend() {
-		d_suspendable.suspend();
+	public boolean suspend() {
+		return d_suspendable.suspend();
 	}
 
-	public void wakeUp() {
-		d_suspendable.wakeUp();
+	public boolean wakeUp() {
+		return d_suspendable.wakeUp();
 	}
 
-	public void abort() {
-		d_suspendable.abort();		
+	public boolean abort() {
+		return d_suspendable.abort();		
 	}
 
 }

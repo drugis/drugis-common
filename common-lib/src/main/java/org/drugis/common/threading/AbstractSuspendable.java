@@ -13,18 +13,21 @@ public abstract class AbstractSuspendable implements Suspendable  {
 		return d_threadSuspended;
 	}
 	
-	public synchronized void suspend() {
+	public synchronized boolean suspend() {
 		d_threadSuspended = true;
+		return true;
 	}
 	
-	public synchronized void wakeUp() {
+	public synchronized boolean wakeUp() {
 		d_threadSuspended = false;
 		notify();
+		return true;
 	}
 	
-	public void abort() {
+	public boolean abort() {
 		d_threadTerminated = true;
 		wakeUp();
+		return true;
 	}
 
 	/**

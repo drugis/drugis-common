@@ -12,9 +12,9 @@ import org.junit.Test;
 public class SimpleSuspendableTaskTest {
 	abstract class FakeSuspendable implements Suspendable {
 		public boolean isSuspended() { return false; }
-		public void suspend() {}
-		public void wakeUp() {}
-		public void abort() {}
+		public boolean suspend() { return true; }
+		public boolean wakeUp() { return true; }
+		public boolean abort() { return true; }
 	}
 	
 	private AbortedException d_abort = new AbortedException();
