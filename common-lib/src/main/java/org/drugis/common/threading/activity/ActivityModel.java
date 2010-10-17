@@ -64,4 +64,14 @@ public class ActivityModel {
 	public boolean isFinished() {
 		return d_end.isFinished();
 	}
+
+	public Task getEndState() {
+		return d_end;
+	}
+
+	public Set<Task> getStates() {
+		Set<Task> tasks = new HashSet<Task>(d_transitions.keySet());
+		tasks.add(d_end);
+		return tasks;
+	}
 }
