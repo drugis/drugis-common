@@ -74,4 +74,8 @@ public class ActivityModel {
 		tasks.add(d_end);
 		return tasks;
 	}
+	
+	public Set<Transition> getTransitions() {
+		return new HashSet<Transition>(d_transitions.values());
+	}
 }

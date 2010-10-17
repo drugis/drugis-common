@@ -6,11 +6,11 @@
 	<name>drugis.org-common-gui</name>
 	<version>0.2</version>
 
-<parent>
-<groupId>org.drugis</groupId>
-<artifactId>common</artifactId>
-<version>0.2</version>
-</parent>
+	<parent>
+		<groupId>org.drugis</groupId>
+		<artifactId>common</artifactId>
+		<version>0.2</version>
+	</parent>
 
 	<dependencies>
 		<dependency>
@@ -39,6 +39,17 @@
 			<artifactId>easymock</artifactId>
 			<version>2.4</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-jdk1.5</artifactId>
+			<version>0.7.3</version>
+		</dependency>
+		<dependency>
+			<groupId>jgraph</groupId>
+			<artifactId>jgraph</artifactId>
+			<version>5.13.0.0</version>
 		</dependency>
     <dependency>
       <groupId>${pom.groupId}</groupId>

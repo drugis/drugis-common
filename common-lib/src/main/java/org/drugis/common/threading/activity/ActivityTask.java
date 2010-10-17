@@ -94,4 +94,7 @@ public class ActivityTask implements CompositeTask {
 		d_mgr.fireTaskStarted();
 	}
 
+	public ActivityModel getModel() {
+		return d_model;
+	}
 }
