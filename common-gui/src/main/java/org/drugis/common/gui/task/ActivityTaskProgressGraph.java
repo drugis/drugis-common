@@ -36,15 +36,11 @@ public class ActivityTaskProgressGraph extends JGraph {
 	}
 	
 	Port getDefaultPort(Object vertex, GraphModel model) {
-		// Iterate over all Children
-		for (int i = 0; i < model.getChildCount(vertex); i++) {
-			// Fetch the Child of Vertex at Index i
-			Object child = model.getChild(vertex, i);
-			// Check if Child is a Portif (child instanceof Port)
-			// Return the Child as a Port
-			return (Port) child;
-		}
-		// No Ports Found
+		for (int i = 0; i < model.getChildCount(vertex); i++) { // Iterate over all Children
+			Object child = model.getChild(vertex, i); // Fetch the Child of Vertex at Index i
+			if (child instanceof Port) // Check if Child is a Port
+				return (Port) child; // Return the Child as a Port
+		} // No Ports Found
 		return null;
 	}
 
