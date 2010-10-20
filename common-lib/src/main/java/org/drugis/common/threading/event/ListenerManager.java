@@ -26,7 +26,8 @@ public class ListenerManager {
 	}
 	
 	public void fireEvent(TaskEvent event) {
-		for (TaskListener l : d_listeners) {
+		TaskListener[] listeners = d_listeners.toArray(new TaskListener[] {});
+		for (TaskListener l : listeners) {
 			l.taskEvent(event);
 		}
 	}

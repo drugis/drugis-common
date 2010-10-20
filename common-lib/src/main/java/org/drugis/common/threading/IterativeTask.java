@@ -3,6 +3,8 @@ package org.drugis.common.threading;
 import org.drugis.common.threading.event.ListenerManager;
 
 public class IterativeTask extends SimpleSuspendableTask {
+	private final String d_str;
+
 	static class IterativeSuspendable extends AbstractSuspendable {
 		private ListenerManager d_mgr;
 		private final IterativeComputation d_computation;
@@ -42,13 +44,22 @@ public class IterativeTask extends SimpleSuspendableTask {
 		}
 	}
 	
-	public IterativeTask(IterativeComputation computation) {
+	public IterativeTask(IterativeComputation computation, String str) {
 		super(new IterativeSuspendable(computation));
+		d_str = str;
 		((IterativeSuspendable)d_suspendable).setListenerManager(d_mgr);
+	}
+	
+	public IterativeTask(IterativeComputation computation) {
+		this(computation, computation.toString());
 	}
 	
 	public void setReportingInterval(int interval) {
 		((IterativeSuspendable)d_suspendable).setReportingInterval(interval);
 	}
 
+	@Override
+	public String toString() {
+		return d_str;
+	}
 }

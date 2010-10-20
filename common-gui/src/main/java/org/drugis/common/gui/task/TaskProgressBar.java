@@ -18,54 +18,57 @@ public class TaskProgressBar extends JProgressBar {
 	
 	private String d_title = "";
 	private final Task d_task;
+	
+	private final TaskListener d_phaseListener = new TaskListener() {
+		public void taskEvent(TaskEvent event) {
+			if (event instanceof TaskProgressEvent) {
+				TaskProgressEvent progress = (TaskProgressEvent)event;
+				setValue(percent(progress.getIteration(), progress.getTotalIterations()));
+				setIndeterminate(false);
+				setString(calcString());
+			}
+		}
+	};
 
 	public TaskProgressBar(Task task) {
 		d_task = task;
+		
 		setStringPainted(true);
 		setMinimum(0);
+		setMaximum(100);
 		setIndeterminate(true);
 		setTitle(task.toString() + (task.isStarted() ? "" : " (" + WAITING_TEXT + ")"));
+		setString(calcString());
 		
 		task.addTaskListener(new TaskListener() {
-			private TaskListener d_phaseListener;
-
 			public void taskEvent(TaskEvent event) {
 				if (event instanceof TaskStartedEvent) {
 					setTitle(event.getSource().toString());
+					setString(calcString());
 				}
 				if (event instanceof TaskFinishedEvent) {
+					setValue(100);
 					setIndeterminate(false);
-					setMaximum(1);
-					setValue(1);
+					setString(calcString());
 				}
 				if (event instanceof TaskProgressEvent) {
 					TaskProgressEvent progress = (TaskProgressEvent)event;
+					setValue(percent(progress.getIteration(), progress.getTotalIterations()));
 					setIndeterminate(false);
-					setMaximum(progress.getTotalIterations());
-					setValue(progress.getIteration());
+					setString(calcString());
 				}
 				if (event instanceof PhaseStartedEvent) {
 					PhaseStartedEvent phase = (PhaseStartedEvent)event;
 					setTitle(event.getSource().toString() + " (" + phase.getPhase().toString() + ")");
 					setIndeterminate(true);
-					setMaximum(0);
-					d_phaseListener = new TaskListener() {
-						public void taskEvent(TaskEvent event) {
-							if (event instanceof TaskProgressEvent) {
-								TaskProgressEvent progress = (TaskProgressEvent)event;
-								setIndeterminate(false);
-								getModel().setMaximum(progress.getTotalIterations());
-								getModel().setValue(progress.getIteration());
-							}
-						}
-					};
+					setString(calcString());
 					phase.getPhase().addTaskListener(d_phaseListener);
 				}
 				if (event instanceof PhaseFinishedEvent) {
 					PhaseFinishedEvent phase = (PhaseFinishedEvent)event;
 					setTitle(event.getSource().toString());
 					setIndeterminate(true);
-					setValue(0);
+					setString(calcString());
 					phase.getPhase().removeTaskListener(d_phaseListener);
 				}
 			}
@@ -76,18 +79,15 @@ public class TaskProgressBar extends JProgressBar {
 		d_title = title;
 	}
 	
-	@Override
-	public String getString() {
+	public String calcString() {
 		if (d_task.isFinished()) {
 			return DONE_TEXT;
 		}
-		return d_title + (isIndeterminate() ? "" : ": " + percent(getValue(), getMaximum()) + "%");
+		String string = d_title + (isIndeterminate() ? "" : ": " + getValue() + "%");
+		return string;
 	}
 	
 	private int percent(int value, int maximum) {
 		return (value * 100) / maximum;
 	}
-
-	@Override
-	public void setString(String str) {	}
 }

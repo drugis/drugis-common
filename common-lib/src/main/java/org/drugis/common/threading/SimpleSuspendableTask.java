@@ -10,14 +10,24 @@ public class SimpleSuspendableTask implements SimpleTask {
 	private boolean d_finished = false;
 	private boolean d_aborted = false;
 	private Throwable d_failure;
+	private String d_str;
 
-	public SimpleSuspendableTask(Suspendable suspendable) {
+	public SimpleSuspendableTask(Suspendable suspendable, String str) {
 		d_suspendable = suspendable;
+		d_str = str;
 		d_mgr = new ListenerManager(this);
 	}
 	
+	public SimpleSuspendableTask(Runnable runnable, String str) {
+		this(wrap(runnable), str);
+	}
+	
 	public SimpleSuspendableTask(Runnable runnable) {
-		this(wrap(runnable));
+		this(wrap(runnable), runnable.toString());
+	}
+	
+	public SimpleSuspendableTask(Suspendable suspendable) {
+		this(suspendable, suspendable.toString());
 	}
 
 	private static Suspendable wrap(Runnable runnable) {
@@ -91,4 +101,8 @@ public class SimpleSuspendableTask implements SimpleTask {
 		return d_suspendable.abort();		
 	}
 
+	@Override
+	public String toString() {
+		return d_str;
+	}
 }

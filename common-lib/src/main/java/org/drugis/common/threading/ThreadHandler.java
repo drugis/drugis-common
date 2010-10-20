@@ -99,7 +99,9 @@ public class ThreadHandler extends AbstractObservable {
 				++i;
 			} else if (task instanceof CompositeTask) {
 				CompositeTask compositeTask = (CompositeTask)task;
-				compositeTask.start();
+				if (!compositeTask.isStarted()) {
+					compositeTask.start();
+				}
 				List<SimpleTask> next = compositeTask.getNextTasks();
 				for (int j = 0; j < next.size() && toRun.size() < n; ++j) {
 					add(toRun, next.get(j));

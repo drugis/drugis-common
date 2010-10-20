@@ -166,7 +166,7 @@ public class ThreadHandlerIT {
 		th.scheduleTasks(nCoresHeadListComplement);
 		sleepLongEnough();
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadListComplement));
-		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList.subList(0, NUMMODELS - numCores)));
+		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList.subList(0, numCores - 2)));
 		assertTrue(th.getScheduledTasks().containsAll(ToDo1));
 	}
 	

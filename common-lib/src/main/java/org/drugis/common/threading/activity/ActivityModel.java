@@ -64,7 +64,11 @@ public class ActivityModel {
 	public boolean isFinished() {
 		return d_end.isFinished();
 	}
-
+	
+	public Task getStartState() {
+		return d_start;
+	}
+	
 	public Task getEndState() {
 		return d_end;
 	}

@@ -112,7 +112,7 @@ public class SimpleSuspendableTaskTest {
 	public void suspendSuspendsNested() {
 		Suspendable mockSuspendable = createStrictMock(Suspendable.class);
 		expect(mockSuspendable.isSuspended()).andReturn(false);
-		mockSuspendable.suspend();
+		expect(mockSuspendable.suspend()).andReturn(true);
 		expect(mockSuspendable.isSuspended()).andReturn(true);
 		replay(mockSuspendable);
 		
@@ -126,7 +126,7 @@ public class SimpleSuspendableTaskTest {
 	@Test
 	public void wakeUpWakesNested() {
 		Suspendable mockSuspendable = createStrictMock(Suspendable.class);
-		mockSuspendable.wakeUp();
+		expect(mockSuspendable.wakeUp()).andReturn(true);
 		replay(mockSuspendable);
 		
 		SimpleTask task = new SimpleSuspendableTask(mockSuspendable);
@@ -137,7 +137,7 @@ public class SimpleSuspendableTaskTest {
 	@Test
 	public void wakeUpAbortsNested() {
 		Suspendable mockSuspendable = createStrictMock(Suspendable.class);
-		mockSuspendable.abort();
+		expect(mockSuspendable.abort()).andReturn(true);
 		replay(mockSuspendable);
 		
 		SimpleTask task = new SimpleSuspendableTask(mockSuspendable);

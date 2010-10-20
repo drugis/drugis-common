@@ -33,14 +33,19 @@ public class ActivityTask implements CompositeTask {
 	private ListenerManager d_mgr = new ListenerManager(this);
 	private final ActivityModel d_model;
 	private boolean d_started = false;
+	private String d_str;
 	
-	public ActivityTask(ActivityModel model) {
+	public ActivityTask(ActivityModel model, String str) {
 		d_model = model;
+		d_str = str;
 		final PhaseListener listener = new PhaseListener();
 		for (Task t : d_model.getStates()) {
 			t.addTaskListener(listener);
 		}
-
+	}
+	
+	public ActivityTask(ActivityModel model) {
+		this(model, model.toString());
 	}
 
 	public void addTaskListener(TaskListener l) {
@@ -96,5 +101,10 @@ public class ActivityTask implements CompositeTask {
 
 	public ActivityModel getModel() {
 		return d_model;
+	}
+	
+	@Override
+	public String toString() {
+		return d_str;
 	}
 }

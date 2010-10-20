@@ -75,8 +75,8 @@ public class TaskProgressBarTest {
 		task.run();
 		assertEquals(TaskProgressBar.DONE_TEXT, bar.getString());
 		assertFalse(bar.isIndeterminate());
-		assertEquals(1, bar.getMaximum());
-		assertEquals(1, bar.getValue());
+		assertEquals(100, bar.getMaximum());
+		assertEquals(100, bar.getValue());
 	}
 
 	@Test
@@ -96,7 +96,7 @@ public class TaskProgressBarTest {
 		});
 		
 		task.run();
-		Integer[] expected = new Integer[] {0, 2000, 4000, 6000, 8000, 10000, 1};
+		Integer[] expected = new Integer[] {20, 40, 60, 80, 100};
 		assertEquals(Arrays.asList(expected), events);
 		
 		String[] expectedStr = new String[] {
@@ -104,9 +104,7 @@ public class TaskProgressBarTest {
 			task.toString() + ": 20%",
 			task.toString() + ": 40%",
 			task.toString() + ": 60%",
-			task.toString() + ": 80%",
-			task.toString() + ": 100%",
-			TaskProgressBar.DONE_TEXT
+			task.toString() + ": 80%"
 		};
 		assertEquals(Arrays.asList(expectedStr), strings);
 	}
@@ -136,13 +134,10 @@ public class TaskProgressBarTest {
 		phase1.run();
 		String title = ctask.toString() + " (" + phase1.toString() + ")";
 		String[] expected = new String[] {
-				title,
 				title + ": 0%",
 				title + ": 30%",
 				title + ": 60%",
 				title + ": 90%",
-				title + ": 100%",
-				ctask.toString()
 		};
 		ctask.d_mgr.firePhaseFinished(phase1);
 		assertEquals(Arrays.asList(expected), strings);
