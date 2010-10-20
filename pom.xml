@@ -49,5 +49,6 @@
   <modules>
     <module>common-gui</module>
     <module>common-lib</module>
+    <module>common-test</module>
   </modules>
 </project>
