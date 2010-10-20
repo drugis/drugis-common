@@ -15,7 +15,7 @@
   <distributionManagement>
     <repository>
       <uniqueVersion>true</uniqueVersion>
-      <id>drugis.org</id>
+      <id>ssh-drugis.org</id>
       <name>drugis.org repository</name>
       <url>scp://drugis.org/var/www/drugis.org/mvn</url>
       <layout>default</layout>
