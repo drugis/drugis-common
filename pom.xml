@@ -1,54 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <properties>
-	<projectVersion>0.3-SNAPSHOT</projectVersion>
-  </properties>
+	<properties>
+		<projectVersion>0.3-SNAPSHOT</projectVersion>
+	</properties>
 
-  <groupId>org.drugis</groupId>
-  <artifactId>common</artifactId>
-  <version>0.3-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>drugis-common</name>
+	<groupId>org.drugis</groupId>
+	<artifactId>common</artifactId>
+	<version>0.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>drugis-common</name>
 
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>true</uniqueVersion>
-      <id>ssh-drugis.org</id>
-      <name>drugis.org repository</name>
-      <url>scp://drugis.org/var/www/drugis.org/mvn</url>
-      <layout>default</layout>
-    </repository>
-  </distributionManagement>	
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>ssh-drugis.org</id>
+			<name>drugis.org repository</name>
+			<url>scp://drugis.org/var/www/drugis.org/mvn</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>	
 
-  <build>
-    <plugins>
-      <plugin>
-	<artifactId>maven-eclipse-plugin</artifactId>
-	<configuration>
-	  <downloadJavadocs>true</downloadJavadocs>
-	  <downloadSources>true</downloadSources>
-	</configuration>
-      </plugin>
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-javadoc-plugin</artifactId>
-		<executions>
-			<execution>
-				<id>attach-javadocs</id>
-    				<goals>
-    					<goal>jar</goal>
-    				</goals>
-    			</execution>
-    		</executions>
-    	</plugin>
-    </plugins>		
-  </build>
+	<build>
+		<plugins>
+			<!-- eclipse integration -->
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadJavadocs>true</downloadJavadocs>
+					<downloadSources>true</downloadSources>
+				</configuration>
+			</plugin>
 
-  <modules>
-    <module>common-gui</module>
-    <module>common-lib</module>
-    <module>common-test</module>
-  </modules>
+			<!-- attach source to release -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- attach javadoc to release -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
+		<module>common-gui</module>
+		<module>common-lib</module>
+		<module>common-test</module>
+	</modules>
 </project>
