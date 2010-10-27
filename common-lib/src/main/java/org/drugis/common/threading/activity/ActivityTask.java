@@ -65,12 +65,18 @@ public class ActivityTask implements CompositeTask {
 	}
 
 	public boolean isFailed() {
-		// TODO Auto-generated method stub
-		return false;
+		return getFailureCause() != null;
 	}
 
 	public Throwable getFailureCause() {
-		// TODO Auto-generated method stub
+		if (!isStarted() || isFinished()) {
+			return null;
+		}
+		for (SimpleTask t : getNextTasks()) {
+			if (t.isFailed()) {
+				return t.getFailureCause();
+			}
+		}
 		return null;
 	}
 
