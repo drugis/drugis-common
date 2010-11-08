@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,7 +18,8 @@ import org.drugis.common.threading.Task;
 import org.drugis.common.threading.ThreadHandler;
 import org.drugis.common.threading.activity.ActivityModel;
 import org.drugis.common.threading.activity.ActivityTask;
-import org.drugis.common.threading.activity.DirectTransition;
+import org.drugis.common.threading.activity.ForkTransition;
+import org.drugis.common.threading.activity.JoinTransition;
 import org.drugis.common.threading.activity.Transition;
 
 public class TaskProgressBarExample {
@@ -50,17 +53,24 @@ public class TaskProgressBarExample {
 				}
 			}
 		}, "start");
-		IterativeTask middle = new IterativeTask(new LongComputation(500), "middle");
-		middle.setReportingInterval(5);
+		IterativeTask middle1 = new IterativeTask(new LongComputation(1500), "fork 1");
+		middle1.setReportingInterval(25);
+		IterativeTask middle2 = new IterativeTask(new LongComputation(750), "fork 2");
+		middle2.setReportingInterval(25);
+		IterativeTask middle3 = new IterativeTask(new LongComputation(2000), "fork 3");
+		middle3.setReportingInterval(25);
+		List<Task> middle = Arrays.asList(new Task[] { middle1, middle2, middle3 } );
 		IterativeTask end = new IterativeTask(new LongComputation(500), "end");
 		end.setReportingInterval(50);
-		ArrayList<Transition> trans = new ArrayList<Transition>();
-		trans.add(new DirectTransition(start, middle));
-		trans.add(new DirectTransition(middle, end));
+
+		List<Transition> trans = new ArrayList<Transition>();
+		trans.add(new ForkTransition(start, middle));
+		trans.add(new JoinTransition(middle, end));
+
 		ActivityModel actModel = new ActivityModel(start, end, trans);
 		final ActivityTask test = new ActivityTask(actModel, "Testing");
 		TaskProgressBar taskProgressBar = new TaskProgressBar(test);
-		taskProgressBar.setPreferredSize(new Dimension(300, 20));
+		taskProgressBar.setPreferredSize(new Dimension(350, 20));
 		
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

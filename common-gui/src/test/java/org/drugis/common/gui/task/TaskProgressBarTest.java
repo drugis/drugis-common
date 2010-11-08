@@ -100,11 +100,11 @@ public class TaskProgressBarTest {
 		assertEquals(Arrays.asList(expected), events);
 		
 		String[] expectedStr = new String[] {
-			task.toString() + ": 0%",
-			task.toString() + ": 20%",
-			task.toString() + ": 40%",
-			task.toString() + ": 60%",
-			task.toString() + ": 80%"
+			task.toString() + ": 0%)",
+			task.toString() + ": 20%)",
+			task.toString() + ": 40%)",
+			task.toString() + ": 60%)",
+			task.toString() + ": 80%)"
 		};
 		assertEquals(Arrays.asList(expectedStr), strings);
 	}
@@ -120,7 +120,7 @@ public class TaskProgressBarTest {
 		
 		assertEquals(ctask.toString() + " (waiting)", bar.getString());
 		ctask.start();
-		assertEquals(ctask.toString(), bar.getString());
+		assertEquals(ctask.toString() + ")", bar.getString());
 		final List<String> strings = new ArrayList<String>();
 		bar.getModel().addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -132,12 +132,12 @@ public class TaskProgressBarTest {
 		
 		ctask.d_mgr.firePhaseStarted(phase1);
 		phase1.run();
-		String title = ctask.toString() + " (" + phase1.toString() + ")";
+		String title = ctask.toString() + " (" + phase1.toString();
 		String[] expected = new String[] {
-				title + ": 0%",
-				title + ": 30%",
-				title + ": 60%",
-				title + ": 90%",
+				title + ": 0%)",
+				title + ": 30%)",
+				title + ": 60%)",
+				title + ": 90%)",
 		};
 		ctask.d_mgr.firePhaseFinished(phase1);
 		assertEquals(Arrays.asList(expected), strings);
@@ -179,12 +179,12 @@ public class TaskProgressBarTest {
 		expStrings.add(ctask.toString() + " (" + phase1.toString() + ")");
 		expIndeterminate.add(true);
 		
-		phase1.d_mgr.fireTaskProgress(300, 1000);
-		expStrings.add(ctask.toString() + " (" + phase1.toString() + "): 30%");
+		phase1.d_mgr.fireTaskProgress(30, 100);
+		expStrings.add(ctask.toString() + " (" + phase1.toString() + ": 30%)");
 		expIndeterminate.add(false);
 		
 		ctask.d_mgr.firePhaseStarted(phase2);
-		expStrings.add(ctask.toString() + " (" + phase1.toString() + ", " + phase2.toString() + ")");
+		expStrings.add(ctask.toString() + " (" + phase1.toString() + ": 30%, " + phase2.toString() + ")");
 		expIndeterminate.add(true);
 		
 		//FIXME: fill in

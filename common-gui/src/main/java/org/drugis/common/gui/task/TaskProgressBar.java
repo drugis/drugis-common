@@ -1,5 +1,10 @@
 package org.drugis.common.gui.task;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.swing.JProgressBar;
 
 import org.drugis.common.threading.Task;
@@ -29,6 +34,8 @@ public class TaskProgressBar extends JProgressBar {
 			}
 		}
 	};
+	private List<Task> d_phases;
+	private HashMap<Task, Integer> d_tasks;
 
 	public TaskProgressBar(Task task) {
 		d_task = task;
@@ -37,8 +44,11 @@ public class TaskProgressBar extends JProgressBar {
 		setMinimum(0);
 		setMaximum(100);
 		setIndeterminate(true);
-		setTitle(task.toString() + (task.isStarted() ? "" : " (" + WAITING_TEXT + ")"));
+		setTitle(task.toString() + ( task.isStarted() ? ")" : " (" + WAITING_TEXT ));
 		setString(calcString());
+		
+		d_phases = new ArrayList<Task>();
+		d_tasks = new HashMap<Task, Integer>();
 		
 		task.addTaskListener(new TaskListener() {
 			public void taskEvent(TaskEvent event) {
@@ -57,19 +67,53 @@ public class TaskProgressBar extends JProgressBar {
 					setIndeterminate(false);
 					setString(calcString());
 				}
-				if (event instanceof PhaseStartedEvent) {
-					PhaseStartedEvent phase = (PhaseStartedEvent)event;
-					setTitle(event.getSource().toString() + " (" + phase.getPhase().toString() + ")");
-					setIndeterminate(true);
+				if (event instanceof PhaseStartedEvent) {					
+					d_phases.add(((PhaseStartedEvent)event).getPhase());
+					
+					String title = event.getSource().toString() + " (";
+					int c=0;
+					
+					for(Task t : d_phases) {
+						++c;
+						title += (c > 1 ? ", " : "") + t.toString();
+						setIndeterminate(true);
+						t.addTaskListener(d_phaseListener);
+					}
+					
+					/*
+					d_tasks.put(((PhaseStartedEvent)event).getPhase(), new Integer(getValue()));
+					for (Entry<Task, Integer> entry : d_tasks.entrySet()) {
+					    Task key = entry.getKey();
+					    Object value = entry.getValue();
+					    ++c;
+						title += (c > 1 ? ", " : "") + key.toString();
+						setIndeterminate(true);
+						key.addTaskListener(d_phaseListener);
+					}
+					*/
+					setTitle(title);
 					setString(calcString());
-					phase.getPhase().addTaskListener(d_phaseListener);
 				}
-				if (event instanceof PhaseFinishedEvent) {
-					PhaseFinishedEvent phase = (PhaseFinishedEvent)event;
-					setTitle(event.getSource().toString());
-					setIndeterminate(true);
+				if (event instanceof PhaseFinishedEvent) {				
+					String title = event.getSource().toString() + " (";
+					
+					for( Task t : d_phases ) {
+						if(t.equals(((PhaseFinishedEvent) event).getPhase())) {
+							title += t.toString() + ": " + DONE_TEXT;
+							setIndeterminate(true);
+							t.removeTaskListener(d_phaseListener);
+						}
+					}
+					
+					if(d_phases.contains(((PhaseFinishedEvent) event).getPhase())) { 
+						d_phases.remove(((PhaseFinishedEvent) event).getPhase());
+					}
+					
+					for( Task t : d_phases) {
+						title += " " + t.toString();
+					}
+					setTitle(title);
 					setString(calcString());
-					phase.getPhase().removeTaskListener(d_phaseListener);
 				}
 			}
 		});
@@ -83,7 +127,7 @@ public class TaskProgressBar extends JProgressBar {
 		if (d_task.isFinished()) {
 			return DONE_TEXT;
 		}
-		String string = d_title + (isIndeterminate() ? "" : ": " + getValue() + "%");
+		String string = d_title + (isIndeterminate() ? ")" : ": " + getValue() + "%)");
 		return string;
 	}
 	
