@@ -32,11 +32,14 @@ import java.util.Map;
 
 import org.drugis.common.beans.AbstractObservable;
 import org.drugis.common.threading.SuspendableThreadWrapper;
+import org.drugis.common.threading.event.TaskEvent;
+import org.drugis.common.threading.event.TaskEvent.EventType;
 
 public class ThreadHandler extends AbstractObservable {
 	
 	public static final String PROPERTY_RUNNING_THREADS = "runningThreads";
 	public static final String PROPERTY_QUEUED_THREADS = "queuedThreads"; // FIXME: rename to queuedTasks
+	public static final String PROPERTY_FAILED_TASK = "failedTask";
 	
 	/* Separate thread to start/suspend threads */
 	private class RunQueueCleaner implements Runnable {
@@ -72,12 +75,22 @@ public class ThreadHandler extends AbstractObservable {
 				}
 			}
 		}
-	} 
+	}
+	
+	private class TaskFailureObserver implements TaskListener {
+		public void taskEvent(TaskEvent event) {
+			if (event.getType() == EventType.TASK_FAILED) {
+				firePropertyChange(PROPERTY_FAILED_TASK, null, event);
+			}
+		}
+	}
 
 	private final int d_numCores;
 	LinkedList<Task> d_scheduledTasks;
 	LinkedList<SuspendableThreadWrapper> d_runningTasks;
 	Thread d_cleaner;
+	private TaskFailureObserver d_failureObserver = new TaskFailureObserver();
+	
 	private static ThreadHandler d_singleton;
 	
 	private ThreadHandler() {
@@ -92,7 +105,7 @@ public class ThreadHandler extends AbstractObservable {
 		List<SimpleTask> toRun = new ArrayList<SimpleTask>(n);
 		for (int i = 0; toRun.size() < n && i < d_scheduledTasks.size(); ) {
 			Task task = d_scheduledTasks.get(i);
-			if (task.isFinished()) {
+			if (task.isFinished() || task.isFailed() || task.isAborted()) {
 				d_scheduledTasks.remove(i);
 			} else if (task instanceof SimpleTask) {
 				add(toRun, (SimpleTask)d_scheduledTasks.get(i));
@@ -170,6 +183,7 @@ public class ThreadHandler extends AbstractObservable {
 			SuspendableThreadWrapper w = d_wrappers.get(r);
 			if (w == null) {
 				w = new SuspendableThreadWrapper(r);
+				r.addTaskListener(d_failureObserver);
 				d_wrappers.put(r, w);
 			}
 			newList.add(w);
@@ -186,6 +200,7 @@ public class ThreadHandler extends AbstractObservable {
 			}
 		}
 		for (Task r : toRemove) {
+			r.removeTaskListener(d_failureObserver);
 			d_wrappers.remove(r);
 		}
 	}
