@@ -20,10 +20,12 @@ import org.drugis.common.threading.event.TaskProgressEvent;
 public class TaskProgressModel extends AbstractObservable implements TextProgressModel {
 	private final class PhaseListener implements TaskListener {
 		public void taskEvent(TaskEvent event) {
-			if (event.getType().equals(TaskEvent.EventType.TASK_PROGRESS)) {
-				d_phaseProgress.put(event.getSource(), calcProgress((TaskProgressEvent) event));
-				setDeterminate(calcDeterminate());
-				setProgress(calcProgress());
+			synchronized(d_lock) {
+				if (event.getType().equals(TaskEvent.EventType.TASK_PROGRESS)) {
+					d_phaseProgress.put(event.getSource(), calcProgress((TaskProgressEvent) event));
+					setDeterminate(calcDeterminate());
+					setProgress(calcProgress());
+				}
 			}
 		}
 	}
@@ -38,40 +40,43 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 	private List<Task> d_phases = new ArrayList<Task>();
 	private boolean d_determinate;
 	private PhaseListener d_phaseListener = new PhaseListener();
+	private Object d_lock = new Object();
 	
 	public TaskProgressModel(Task task) {
 		d_task = task;
 		setDeterminate(false);
 		task.addTaskListener(new TaskListener() {
 			public void taskEvent(TaskEvent e) {
-				if (e.getType().equals(TaskEvent.EventType.TASK_STARTED)) {
-					setProgress(0.0);
-				} else if (e.getType().equals(TaskEvent.EventType.TASK_PROGRESS)) {
-					setDeterminate(true);
-					setProgress(calcProgress((TaskProgressEvent) e));
-				} else if (e.getType().equals(TaskEvent.EventType.TASK_FINISHED)) {
-					setDeterminate(true);
-					setProgress(1.0);
-				} else if (e.getType().equals(TaskEvent.EventType.TASK_FAILED)) {
-					setDeterminate(true);
-					setProgress(0.0);
-				} else if (e.getType().equals(TaskEvent.EventType.TASK_ABORTED)) {
-					setDeterminate(true);
-					setProgress(0.0);
-				} else if (e instanceof PhaseEvent) {
-					PhaseEvent evt = (PhaseEvent) e;
-					Task phase = evt.getPhase();
-					if (e.getType().equals(TaskEvent.EventType.PHASE_STARTED)) {
-						d_phases.add(phase);
-						phase.addTaskListener(d_phaseListener);
-						d_phaseProgress.put(phase, null);
-					} else if (e.getType().equals(TaskEvent.EventType.PHASE_FINISHED)) {
-						phase.removeTaskListener(d_phaseListener);
-						d_phaseProgress.remove(phase);
-						d_phases.remove(phase);
+				synchronized(d_lock) {
+					if (e.getType().equals(TaskEvent.EventType.TASK_STARTED)) {
+						setProgress(0.0);
+					} else if (e.getType().equals(TaskEvent.EventType.TASK_PROGRESS)) {
+						setDeterminate(true);
+						setProgress(calcProgress((TaskProgressEvent) e));
+					} else if (e.getType().equals(TaskEvent.EventType.TASK_FINISHED)) {
+						setDeterminate(true);
+						setProgress(1.0);
+					} else if (e.getType().equals(TaskEvent.EventType.TASK_FAILED)) {
+						setDeterminate(true);
+						setProgress(0.0);
+					} else if (e.getType().equals(TaskEvent.EventType.TASK_ABORTED)) {
+						setDeterminate(true);
+						setProgress(0.0);
+					} else if (e instanceof PhaseEvent) {
+						PhaseEvent evt = (PhaseEvent) e;
+						Task phase = evt.getPhase();
+						if (e.getType().equals(TaskEvent.EventType.PHASE_STARTED)) {
+							d_phases.add(phase);
+							phase.addTaskListener(d_phaseListener);
+							d_phaseProgress.put(phase, null);
+						} else if (e.getType().equals(TaskEvent.EventType.PHASE_FINISHED)) {
+							phase.removeTaskListener(d_phaseListener);
+							d_phaseProgress.remove(phase);
+							d_phases.remove(phase);
+						}
+						setDeterminate(calcDeterminate());
+						setProgress(calcProgress());
 					}
-					setDeterminate(calcDeterminate());
-					setProgress(calcProgress());
 				}
 			}
 		});
@@ -136,8 +141,10 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 
 	private List<String> getPhaseStrings() {
 		List<String> phaseStrings = new ArrayList<String>();
-		for (Task p : d_phases) {
-			phaseStrings.add(p.toString() + ": " + formatProgress(d_phaseProgress.get(p)));
+		synchronized (d_lock) {
+			for (Task p : d_phases) {
+				phaseStrings.add(p.toString() + ": " + formatProgress(d_phaseProgress.get(p)));
+			}			
 		}
 		return phaseStrings;
 	}
