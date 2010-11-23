@@ -4,7 +4,7 @@ import org.drugis.common.threading.SimpleTask;
 import org.drugis.common.threading.TaskListener;
 import org.drugis.common.threading.event.ListenerManager;
 
-class MockTask implements SimpleTask {
+public class MockTask implements SimpleTask {
 	private boolean d_started = false;
 	private boolean d_finished = false;
 	private Throwable d_failure = null;
@@ -58,6 +58,10 @@ class MockTask implements SimpleTask {
 		d_aborted = true;
 		d_mgr.fireTaskAborted();
 		return true;
+	}
+	
+	public void progress(int iteration, int max) {
+		d_mgr.fireTaskProgress(iteration, max);
 	}
 
 	public boolean isSuspended() {
