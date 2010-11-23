@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.drugis</groupId>
 		<artifactId>common</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4</version>
 	</parent>
 
 	<groupId>org.drugis</groupId>
 	<artifactId>common-lib</artifactId>
 	<name>drugis.org-common-lib</name>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4</version>
 	<packaging>jar</packaging>
 
 
