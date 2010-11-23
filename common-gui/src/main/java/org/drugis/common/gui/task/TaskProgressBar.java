@@ -5,7 +5,11 @@ import org.drugis.common.threading.Task;
 
 @SuppressWarnings("serial")
 public class TaskProgressBar extends TextProgressBar {
+	public TaskProgressBar(TaskProgressModel model) {
+		super(model);
+	}
+	
 	public TaskProgressBar(Task task) {
 		super(new TaskProgressModel(task));
-	}	
+	}
 }

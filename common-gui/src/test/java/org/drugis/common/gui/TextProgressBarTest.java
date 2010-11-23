@@ -2,6 +2,10 @@ package org.drugis.common.gui;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
+
 import org.drugis.common.beans.AbstractObservable;
 import org.junit.Test;
 
@@ -74,34 +78,42 @@ public class TextProgressBarTest {
 
 
 	@Test
-	public void testProgression() {
+	public void testProgression() throws InterruptedException, InvocationTargetException {
 		TestProgressModel model = new TestProgressModel("X", 0.23);
 		
 		TextProgressBar bar = new TextProgressBar(model);
 		assertEquals(23, bar.getValue());
 		
 		model.setProgress(0.29);
+		
+		SwingUtilities.invokeAndWait(new Runnable() { public void run() {} });
+
 		assertEquals(29, bar.getValue());
 	}
 	
 	@Test
-	public void testToDeterminate() {
+	public void testToDeterminate() throws InterruptedException, InvocationTargetException {
 		TestProgressModel model = new TestProgressModel("X");
 		TextProgressBar bar = new TextProgressBar(model);
 		
 		model.setProgress(0.1);
 		model.setDeterminate(true);
 		
+		SwingUtilities.invokeAndWait(new Runnable() { public void run() {} });
+
 		assertEquals(false, bar.isIndeterminate());
 		assertEquals(10, bar.getValue());
 	}
 	
 	@Test
-	public void testChangeText() {
+	public void testChangeText() throws InterruptedException, InvocationTargetException {
 		TestProgressModel model = new TestProgressModel("X");
 		TextProgressBar bar = new TextProgressBar(model);
 		
 		model.setText("Y");
+
+		SwingUtilities.invokeAndWait(new Runnable() { public void run() {} });
+
 		assertEquals("Y", bar.getString());
 	}
 }
