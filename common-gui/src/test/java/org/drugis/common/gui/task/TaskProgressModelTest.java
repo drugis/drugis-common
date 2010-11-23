@@ -266,8 +266,6 @@ public class TaskProgressModelTest {
 		expStrings.add(ctask.toString() + " (" + phase1.toString() + ": 30%, " + phase2.toString() + ": ?)");
 		expDeterminate.add(false);
 		
-		//FIXME: fill in
-		
 		assertEquals(expStrings, text);
 		assertEquals(expDeterminate, determinate);
 	}

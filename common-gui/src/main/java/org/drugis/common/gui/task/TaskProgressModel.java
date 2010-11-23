@@ -1,11 +1,12 @@
 package org.drugis.common.gui.task;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.drugis.common.beans.AbstractObservable;
@@ -88,7 +89,7 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 	}
 
 	protected Double calcProgress() {
-		Collection<Double> values = d_phaseProgress.values();
+		Set<Double> values = new HashSet<Double>(d_phaseProgress.values());
 		values.remove(null);
 		if(!values.isEmpty()) {
 			return Collections.min(values);
