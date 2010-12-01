@@ -55,7 +55,7 @@ public class SimpleSuspendableTask implements SimpleTask {
 			d_aborted = true;
 			d_mgr.fireTaskAborted();
 			return;
-		} catch (Throwable e) {
+		} catch (FailureException e) {
 			d_failure = e;
 			d_mgr.fireTaskFailed(e);
 			return;

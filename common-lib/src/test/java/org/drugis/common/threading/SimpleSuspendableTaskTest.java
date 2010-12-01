@@ -18,7 +18,7 @@ public class SimpleSuspendableTaskTest {
 	}
 	
 	private AbortedException d_abort = new AbortedException();
-	private RuntimeException d_fail = new RuntimeException("FAIL");
+	private FailureException d_fail = new FailureException("FAIL");
 	
 	class SuccessfulTask extends FakeSuspendable {
 		public void run() {

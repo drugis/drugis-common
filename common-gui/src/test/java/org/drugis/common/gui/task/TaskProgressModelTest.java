@@ -16,6 +16,7 @@ import org.drugis.common.gui.TextProgressModel;
 import org.drugis.common.threading.AbstractIterativeComputation;
 import org.drugis.common.threading.CompositeTask;
 import org.drugis.common.threading.IterativeTask;
+import org.drugis.common.threading.NullTask;
 import org.drugis.common.threading.SimpleTask;
 import org.drugis.common.threading.TaskListener;
 import org.drugis.common.threading.activity.MockTask;
@@ -63,6 +64,15 @@ public class TaskProgressModelTest {
 		public String toString() {
 			return super.toString().substring(super.toString().indexOf('@'));
 		}
+	}
+	
+	@Test
+	public void testGetSetTask() {
+		ShortComputation comp = new ShortComputation(100);
+		IterativeTask task = new IterativeTask(comp);
+		TaskProgressModel mod = new TaskProgressModel(new NullTask());
+		mod.setTask(task);
+		assertTrue(mod.getTask()== task);
 	}
 	
 	@Test
