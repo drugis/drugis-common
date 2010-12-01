@@ -10,6 +10,7 @@ import org.drugis.common.threading.Task;
 import org.drugis.common.threading.TaskListener;
 import org.drugis.common.threading.event.ListenerManager;
 import org.drugis.common.threading.event.TaskEvent;
+import org.drugis.common.threading.event.TaskFailedEvent;
 import org.drugis.common.threading.event.TaskFinishedEvent;
 import org.drugis.common.threading.event.TaskStartedEvent;
 
@@ -26,7 +27,9 @@ public class ActivityTask implements CompositeTask {
 				if (event.getSource() == d_model.getEndState()) {
 					d_mgr.fireTaskFinished();
 				}
-			}
+			} else if (event instanceof TaskFailedEvent) {
+				// fail?
+			} 
 		}
 	}
 
