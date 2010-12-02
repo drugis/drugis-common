@@ -118,7 +118,7 @@ public class ActivityTaskTest {
 		verify(listener);
 	}
 	
-	@Test @Ignore
+	@Test
 	public void testTaskFailed() {
 		MockTask start = new MockTask();
 		MockTask end = new MockTask();
@@ -130,7 +130,7 @@ public class ActivityTaskTest {
 		
 		TaskListener listener = createStrictMock(TaskListener.class);
 		FailureException ex = new FailureException("err");
-		listener.taskEvent(new TaskFailedEvent(start, ex));
+		listener.taskEvent(new TaskFailedEvent(task, ex));
 		replay(listener);
 		
 		task.addTaskListener(listener);

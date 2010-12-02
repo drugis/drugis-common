@@ -28,7 +28,7 @@ public class ActivityTask implements CompositeTask {
 					d_mgr.fireTaskFinished();
 				}
 			} else if (event instanceof TaskFailedEvent) {
-				// fail?
+				d_mgr.fireTaskFailed(((TaskFailedEvent) event).getCause());
 			} 
 		}
 	}
