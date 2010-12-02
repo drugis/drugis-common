@@ -1,6 +1,5 @@
 package org.drugis.common;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +32,6 @@ public class ImageLoader {
 	}
 
 	private static String deriveGfxPath(String name) {
-		return imagePath + File.separator + name;
+		return imagePath + name;
 	}
 }
