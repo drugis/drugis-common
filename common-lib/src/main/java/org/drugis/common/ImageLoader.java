@@ -1,5 +1,6 @@
 package org.drugis.common;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class ImageLoader {
 		} else {
 		    java.net.URL imgURL = ImageLoader.class.getResource(deriveGfxPath(name));
 		    if (imgURL == null) {
+		    	System.err.println("Error loading image " + deriveGfxPath(name));
 		    	return null;
 		    }
 		    ImageIcon icon = new ImageIcon(imgURL);
@@ -31,6 +33,6 @@ public class ImageLoader {
 	}
 
 	private static String deriveGfxPath(String name) {
-		return imagePath + name;
+		return imagePath + File.separator + name;
 	}
 }
