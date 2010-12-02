@@ -66,6 +66,7 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 			t.removeTaskListener(d_phaseListener);
 		}
 		d_phases.clear();
+		d_phaseProgress.clear();
 	}
 
 	private boolean calcDeterminate() {
