@@ -17,7 +17,7 @@ public class IterativeTask extends SimpleSuspendableTask {
 		public void run() {
 			d_computation.initialize();
 			waitIfSuspended();
-			while (d_computation.getIteration() < d_computation.getTotalIterations()) {
+			while (d_computation.getIteration() < d_computation.getTotalIterations()) {				
 				if (d_interval > 0 && d_computation.getIteration() % d_interval == 0) {
 					fireProgress();
 				}

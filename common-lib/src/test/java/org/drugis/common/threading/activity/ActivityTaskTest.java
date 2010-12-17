@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.drugis.common.threading.FailureException;
 import org.drugis.common.threading.TaskListener;
 import org.drugis.common.threading.event.PhaseFinishedEvent;
 import org.drugis.common.threading.event.PhaseStartedEvent;
+import org.drugis.common.threading.event.TaskFailedEvent;
 import org.drugis.common.threading.event.TaskFinishedEvent;
 import org.drugis.common.threading.event.TaskStartedEvent;
 import org.junit.Ignore;
@@ -113,6 +115,26 @@ public class ActivityTaskTest {
 		task.addTaskListener(listener);
 		start.start();
 		start.finish();
+		verify(listener);
+	}
+	
+	@Test
+	public void testTaskFailed() {
+		MockTask start = new MockTask();
+		MockTask end = new MockTask();
+		Transition trans = new DirectTransition(start, end);
+		
+		ActivityModel model = new ActivityModel(start, end, Collections.singleton(trans));
+		ActivityTask task = new ActivityTask(model);
+		task.start();
+		
+		TaskListener listener = createStrictMock(TaskListener.class);
+		FailureException ex = new FailureException("err");
+		listener.taskEvent(new TaskFailedEvent(task, ex));
+		replay(listener);
+		
+		task.addTaskListener(listener);
+		start.fail(ex);
 		verify(listener);
 	}
 	

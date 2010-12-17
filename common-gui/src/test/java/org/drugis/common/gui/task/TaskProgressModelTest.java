@@ -15,7 +15,9 @@ import org.drugis.common.JUnitUtil;
 import org.drugis.common.gui.TextProgressModel;
 import org.drugis.common.threading.AbstractIterativeComputation;
 import org.drugis.common.threading.CompositeTask;
+import org.drugis.common.threading.FailureException;
 import org.drugis.common.threading.IterativeTask;
+import org.drugis.common.threading.NullTask;
 import org.drugis.common.threading.SimpleTask;
 import org.drugis.common.threading.TaskListener;
 import org.drugis.common.threading.activity.MockTask;
@@ -63,6 +65,15 @@ public class TaskProgressModelTest {
 		public String toString() {
 			return super.toString().substring(super.toString().indexOf('@'));
 		}
+	}
+	
+	@Test
+	public void testGetSetTask() {
+		ShortComputation comp = new ShortComputation(100);
+		IterativeTask task = new IterativeTask(comp);
+		TaskProgressModel mod = new TaskProgressModel(new NullTask());
+		mod.setTask(task);
+		assertTrue(mod.getTask()== task);
 	}
 	
 	@Test
@@ -149,14 +160,14 @@ public class TaskProgressModelTest {
 		final TextProgressModel model = new TaskProgressModel(task);
 		task.start();
 		
+		String failText = task + " " + TaskProgressModel.FAILED_TEXT +": " + "Argh!"; 
 		PropertyChangeListener mock1 = JUnitUtil.mockListener(model, TextProgressModel.PROPERTY_DETERMINATE, false, true);
-		PropertyChangeListener mock2 = JUnitUtil.mockListener(model, TextProgressModel.PROPERTY_TEXT, null, 
-				task.toString() + ": " + TaskProgressModel.FAILED_TEXT);
+		PropertyChangeListener mock2 = JUnitUtil.mockListener(model, TextProgressModel.PROPERTY_TEXT, null,	failText);
 		PropertyChangeListener mock3 = JUnitUtil.mockListener(model, TextProgressModel.PROPERTY_PROGRESS, 0.0, 0.0);
 		model.addPropertyChangeListener(mock1);
 		model.addPropertyChangeListener(mock2);
 		model.addPropertyChangeListener(mock3);
-		task.fail(new RuntimeException("Argh!"));
+		task.fail(new FailureException("Argh!"));
 		verify(mock1);
 		verify(mock2);
 		verify(mock3);
