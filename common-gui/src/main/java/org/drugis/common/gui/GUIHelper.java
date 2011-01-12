@@ -50,7 +50,7 @@ public class GUIHelper {
 		return new String[] {};
 	}
 	
-	private static String wordWrap(String input, boolean surround) {
+	public static String wordWrap(String input, boolean surround) {
 		String[] arr = makeParts(StringEscapeUtils.escapeHtml(input));
 		String resStr = "";
 		for (String s : arr) {
