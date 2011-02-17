@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
-		<projectVersion>0.4.2</projectVersion>
+		<projectVersion>0.5-SNAPSHOT</projectVersion>
 	</properties>
 
 	<groupId>org.drugis</groupId>
 	<artifactId>common</artifactId>
-	<version>0.4.2</version>
+	<version>0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>drugis-common</name>
 
