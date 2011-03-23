@@ -2,6 +2,8 @@ package org.drugis.common.gui;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -9,13 +11,13 @@ import javax.swing.filechooser.FileFilter;
 
 public abstract class FileDialog {
 	
-	private class CustomFileFilter extends FileFilter
+	public static class Filter extends FileFilter
 	{
 		private final String d_description;
-		private final String d_extension;
+		private final List<String> d_extension;
 
-		public CustomFileFilter(String extension, String description) {
-			d_extension = extension;
+		public Filter(String[] extension, String description) {
+			d_extension = Arrays.asList(extension);
 			d_description = description;
 			
 		}
@@ -37,18 +39,18 @@ public abstract class FileDialog {
 	    }
 	    
 		public String getPresentExtension() {
-			return d_extension;
+			return d_extension.get(0);
 		}
 		
 		@Override
-		 public boolean accept(File f) {
+		public boolean accept(File f) {
 	        if (f.isDirectory()) {
 	            return true;
 	        }
 	        
 	        String extension = getExtension(f);
 	        if (extension != null) {
-	            if (extension.equals(d_extension)) {
+	        	if (d_extension.contains(extension)) {
 	            	return true;
 	        	} else {
 	                return false;
@@ -81,11 +83,24 @@ public abstract class FileDialog {
     }
 	
 	public FileDialog(Component frame, String [] extension, String [] description) {
+		this(frame, wrapExtensions(extension), description);
+	}
+	
+	private static String[][] wrapExtensions(String[] extension) {
+		int m = extension.length;
+		String [][] output = new String[m][1];
+		for (int i = 0; i < m ; ++i) {
+			output[i][1] = extension[i];
+		}
+		return output;
+	}
+
+	public FileDialog(Component frame, String [][] extension, String [] description) {
 		
 		d_fileChooser = new JFileChooser();
-		CustomFileFilter defaultFilter = null;
+		Filter defaultFilter = null;
 		for(int i=0; i< extension.length; i++) {
-			CustomFileFilter filter = new CustomFileFilter(extension[i], description[i]);
+			Filter filter = new Filter(extension[i], description[i]);
 			d_fileChooser.addChoosableFileFilter(filter);
 			if (i == 0) {
 				defaultFilter = filter;
@@ -98,11 +113,10 @@ public abstract class FileDialog {
 	
 	protected void handleFileDialogResult(Component frame, int returnVal, String message) {
 		d_currentDirectory = d_fileChooser.getCurrentDirectory();
-		String extension = getExtension();
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String path = fixExtension(d_fileChooser.getSelectedFile().getAbsolutePath(),extension);
+			String path = getPath();
 			try {
-				doAction(path, extension);
+				doAction(path, getExtension());
 			} catch (Exception e1) {
 				d_lastSuccess = false;
 				JOptionPane.showMessageDialog(frame, message + "\n" +
@@ -111,14 +125,16 @@ public abstract class FileDialog {
 			}
 		}
 	}
+
+	protected abstract String getPath();
 	
 	public boolean getLastSuccess() {
 		return d_lastSuccess;
 	}
 
-	private String getExtension() {
-		if(d_fileChooser.getFileFilter() instanceof CustomFileFilter) {
-			return ((CustomFileFilter) d_fileChooser.getFileFilter()).getPresentExtension();
+	protected String getExtension() {
+		if(d_fileChooser.getFileFilter() instanceof Filter) {
+			return ((Filter) d_fileChooser.getFileFilter()).getPresentExtension();
 		} else {
 			return "";
 		}

@@ -16,4 +16,9 @@ abstract public class FileSaveDialog extends FileDialog {
 		int returnValue = d_fileChooser.showSaveDialog(frame);
 		handleFileDialogResult(frame, returnValue, message);
 	}
+
+	@Override
+	protected String getPath() {
+		return fixExtension(d_fileChooser.getSelectedFile().getAbsolutePath(),getExtension());
+	}
 }
