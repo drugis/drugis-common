@@ -11,7 +11,7 @@
 	<groupId>org.drugis</groupId>
 	<artifactId>common-gui</artifactId>
 	<name>drugis.org-common-gui</name>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.4.3</version>
 
 
 	<dependencies>
