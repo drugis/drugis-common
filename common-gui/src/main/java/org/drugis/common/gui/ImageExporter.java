@@ -168,8 +168,8 @@ public class ImageExporter {
 	private static void writePNG(String filename, BufferedImage b) {
 		try {
 			ImageIO.write(b, "png", new File(filename));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
