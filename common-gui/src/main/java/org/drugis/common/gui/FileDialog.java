@@ -90,7 +90,7 @@ public abstract class FileDialog {
 		int m = extension.length;
 		String [][] output = new String[m][1];
 		for (int i = 0; i < m ; ++i) {
-			output[i][1] = extension[i];
+			output[i][0] = extension[i];
 		}
 		return output;
 	}
