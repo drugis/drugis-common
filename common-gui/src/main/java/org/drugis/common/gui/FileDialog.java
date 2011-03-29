@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 public abstract class FileDialog {
@@ -62,8 +61,7 @@ public abstract class FileDialog {
 
 	static File d_currentDirectory = null;
 	protected JFileChooser d_fileChooser;
-	private boolean d_lastSuccess = true;
-    
+	
     public static String fixExtension(String absPath, String ext) {
     	if (ext == null || ext.equals("")) {
     		return absPath;
@@ -74,10 +72,6 @@ public abstract class FileDialog {
     	return absPath + "." + ext;
     }
     
-	protected void setLastSuccess(boolean lastSuccess) {
-		d_lastSuccess = lastSuccess;
-	}
-
     public FileDialog(Component frame, String extension, String description){
     	this(frame, new String [] {extension}, new String [] {description});
     }
@@ -115,22 +109,11 @@ public abstract class FileDialog {
 		d_currentDirectory = d_fileChooser.getCurrentDirectory();
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String path = getPath();
-			try {
-				doAction(path, getExtension());
-			} catch (Exception e1) {
-				d_lastSuccess = false;
-				JOptionPane.showMessageDialog(frame, message + "\n" +
-						d_fileChooser.getSelectedFile().getAbsolutePath());
-				e1.printStackTrace();
-			}
+			doAction(path, getExtension());
 		}
 	}
 
 	protected abstract String getPath();
-	
-	public boolean getLastSuccess() {
-		return d_lastSuccess;
-	}
 
 	protected String getExtension() {
 		if(d_fileChooser.getFileFilter() instanceof Filter) {
