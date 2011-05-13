@@ -18,6 +18,10 @@ public class SingleColumnPanelBuilder {
 	CellConstraints d_cc = new CellConstraints();
 	int d_row = 0;
 
+	public SingleColumnPanelBuilder() {
+		d_builder.setDefaultDialogBorder();
+	}
+	
 	public void add(JComponent comp) {
 		nextRow();
 		d_builder.add(comp, d_cc.xy(1, d_row));
