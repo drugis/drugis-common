@@ -11,6 +11,13 @@
 	<artifactId>common-gui</artifactId>
 	<name>drugis.org-common-gui</name>
 
+	<distributionManagement>
+		<repository>
+			<id>ssh-drugis.org</id>
+			<url>scpexe://drugis.org/var/www/drugis.org/mvn</url>
+		</repository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.jgoodies</groupId>
@@ -22,12 +29,11 @@
 			<artifactId>forms</artifactId>
 			<version>1.2.1</version>
 		</dependency>
-	    	<dependency>
-                        <groupId>jfree</groupId>
-                	<artifactId>jfreechart</artifactId>
-                	<version>1.0.12</version>
-                </dependency>
-
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.12</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -68,17 +74,17 @@
 			<version>1.7</version>
 		</dependency>
 
-    <dependency>
-      <groupId>${pom.groupId}</groupId>
-      <artifactId>common-lib</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${pom.groupId}</groupId>
-      <artifactId>common-test</artifactId>
-      <version>${project.version}</version>
-	  <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>common-lib</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>common-test</artifactId>
+			<version>${pom.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 
@@ -117,10 +123,5 @@
                 </plugin>
         </plugins>
     </build>
-        <distributionManagement>
-		<repository>
-			<id>ssh-drugis.org</id>
-			<url>scpexe://drugis.org/var/www/drugis.org/mvn</url>
-		</repository>
-	</distributionManagement>
+
 </project>

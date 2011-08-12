@@ -5,13 +5,18 @@
 	<parent>
 		<groupId>org.drugis</groupId>
 		<artifactId>common</artifactId>
-		<version>0.4.5-SNAPHOT</version>
+		<version>0.4.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>common-lib</artifactId>
 	<name>drugis.org-common-lib</name>
-	<packaging>jar</packaging>
 
+	<distributionManagement>
+		<repository>
+			<id>ssh-drugis.org</id>
+			<url>scpexe://drugis.org/var/www/drugis.org/mvn</url>
+		</repository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -41,12 +46,12 @@
 			<artifactId>commons-math</artifactId>
 			<version>2.0</version>
 		</dependency>
-    <dependency>
-      <groupId>${pom.groupId}</groupId>
-      <artifactId>common-test</artifactId>
-      <version>${project.version}</version>
-	  <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>common-test</artifactId>
+			<version>${pom.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
     <build>
@@ -67,10 +72,5 @@
 			</plugin>
         </plugins>
     </build>
-        <distributionManagement>
-		<repository>
-			<id>ssh-drugis.org</id>
-			<url>scpexe://drugis.org/var/www/drugis.org/mvn</url>
-		</repository>
-	</distributionManagement>
+
 </project>

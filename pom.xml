@@ -59,8 +59,8 @@
 	</build>
 
 	<modules>
-		<module>common-gui</module>
-		<module>common-lib</module>
 		<module>common-test</module>
+		<module>common-lib</module>
+		<module>common-gui</module>
 	</modules>
 </project>
