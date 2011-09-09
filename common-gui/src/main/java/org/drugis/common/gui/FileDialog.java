@@ -90,7 +90,6 @@ public abstract class FileDialog {
 	}
 
 	public FileDialog(Component frame, String [][] extension, String [] description) {
-		
 		d_fileChooser = new JFileChooser();
 		Filter defaultFilter = null;
 		for(int i=0; i< extension.length; i++) {
@@ -103,6 +102,10 @@ public abstract class FileDialog {
 		d_fileChooser.setFileFilter(defaultFilter);
 		if (d_currentDirectory != null)
 			d_fileChooser.setCurrentDirectory(d_currentDirectory);
+	}
+	
+	public void setVisible(boolean visible) {
+		d_fileChooser.setVisible(visible);
 	}
 	
 	protected void handleFileDialogResult(Component frame, int returnVal, String message) {
