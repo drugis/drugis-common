@@ -34,7 +34,7 @@ import com.jgoodies.binding.list.ObservableList;
 
 /**
  * ListModel that wraps an ObservableList. Will fire events when the ObservableList does.
- * In addition, it will fireContentsChanged when certain properties of the contained Observables change.
+ * In addition, it will fireContentsChanged when certain properties of the contained Observables change, or all properties if none are specified.
  */
 public class ContentAwareListModel<T extends Observable> extends AbstractListModel {
 	private static final long serialVersionUID = 8722229007151818730L;
@@ -42,10 +42,16 @@ public class ContentAwareListModel<T extends Observable> extends AbstractListMod
 	private ObservableList<T> d_nested;
 	@SuppressWarnings("unused") private ListPropertyChangeProxy<T> d_proxy;
 	private List<String> d_properties;
+	
+	public ContentAwareListModel(ObservableList<T> list) {
+		this(list, null);
+	}
 
 	public ContentAwareListModel(ObservableList<T> list, String[] properties) {
 		d_nested = list;
-		d_properties = Arrays.asList(properties);
+		if (properties != null) {
+			d_properties = Arrays.asList(properties);
+		}
 
 		d_nested.addListDataListener(new ListDataListener() {
 			public void intervalRemoved(ListDataEvent e) {
@@ -61,7 +67,7 @@ public class ContentAwareListModel<T extends Observable> extends AbstractListMod
 
 		d_proxy = new ListPropertyChangeProxy<T>(d_nested, new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (d_properties.contains(evt.getPropertyName())) {
+				if (d_properties ==  null || d_properties.contains(evt.getPropertyName())) {
 					int idx = d_nested.indexOf(evt.getSource());
 					fireContentsChanged(ContentAwareListModel.this, idx, idx);
 				}
@@ -75,5 +81,9 @@ public class ContentAwareListModel<T extends Observable> extends AbstractListMod
 
 	public int getSize() {
 		return d_nested.getSize();
+	}
+	
+	public ObservableList<T> getList() {
+		return d_nested;
 	}
 }
