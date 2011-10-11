@@ -152,20 +152,20 @@ public class ThreadHandlerIT {
 
 		sleepLongEnough();
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList));
-		assertTrue(th.getScheduledTasks().containsAll(ToDo1));
+		assertTrue(th.getQueuedTaskList().containsAll(ToDo1));
 		
 		// Note: NOP; rescheduling already-running tasks should not change anything
 		th.scheduleTasks(nCoresHeadList);
 		sleepLongEnough();
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList));
-		assertTrue(th.getScheduledTasks().containsAll(ToDo1));
+		assertTrue(th.getQueuedTaskList().containsAll(ToDo1));
 
 		// reprioritise scheduled tasks by re-adding them; should displace running tasks
 		th.scheduleTasks(nCoresHeadListComplement);
 		sleepLongEnough();
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadListComplement));
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList.subList(0, d_numCores - 2)));
-		assertTrue(th.getScheduledTasks().containsAll(ToDo1));
+		assertTrue(th.getQueuedTaskList().containsAll(ToDo1));
 	}
 	
 	@Test
@@ -259,10 +259,10 @@ public class ThreadHandlerIT {
 		}
 		runthreads.add(t);// 2 threads in waiting list.
 		th.scheduleTasks(runthreads);
-		assertEquals(d_numCores + 2, th.getQueuedThreads());
+		assertEquals(d_numCores + 2, th.getQueuedTasks());
 		
 		th.remove(t);
-		assertEquals(d_numCores + 1, th.getQueuedThreads());
+		assertEquals(d_numCores + 1, th.getQueuedTasks());
 		
 		waitTillDone();
 		assertFalse(t.isFinished());
@@ -277,11 +277,11 @@ public class ThreadHandlerIT {
 		for (int i=0; i<d_numCores + 2; ++i) // 2 threads in waiting list.
 			runthreads.add(new SimpleSuspendableTask(new SuspendableTestThread(100)));
 		th.scheduleTasks(runthreads);
-		assertEquals(d_numCores + 2, th.getQueuedThreads());
+		assertEquals(d_numCores + 2, th.getQueuedTasks());
 		
 		th.clear();
 		
-		assertEquals(0, th.getQueuedThreads());
+		assertEquals(0, th.getQueuedTasks());
 	}
 	
 	@Test
@@ -366,10 +366,10 @@ public class ThreadHandlerIT {
 	class SomeCompositeTask implements CompositeTask {
 		boolean d_started = false;
 		
-		SimpleTask d_first = new SimpleSuspendableTask(new SuspendableTestThread(300));
-		SimpleTask d_middle1 = new SimpleSuspendableTask(new SuspendableTestThread(300));
-		SimpleTask d_middle2 = new SimpleSuspendableTask(new SuspendableTestThread(300));
-		SimpleTask d_last = new SimpleSuspendableTask(new SuspendableTestThread(300));
+		SimpleTask d_first = new SimpleSuspendableTask(new SuspendableTestThread(600));
+		SimpleTask d_middle1 = new SimpleSuspendableTask(new SuspendableTestThread(600));
+		SimpleTask d_middle2 = new SimpleSuspendableTask(new SuspendableTestThread(600));
+		SimpleTask d_last = new SimpleSuspendableTask(new SuspendableTestThread(600));
 		
 		public List<SimpleTask> getNextTasks() {
 			if (!d_started) {
@@ -419,7 +419,7 @@ public class ThreadHandlerIT {
 		
 		sleepLongEnough();
 		assertEquals(Collections.singletonList(task.d_first), threadHandler.getRunningTasks());
-		assertEquals(Collections.singletonList(task), threadHandler.getScheduledTasks());
+		assertEquals(Collections.singletonList(task), threadHandler.getQueuedTaskList());
 		
 		// wait for first task to finish and subsequent tasks to be enqueued
 		waitTillDone(task.d_first);
@@ -438,7 +438,75 @@ public class ThreadHandlerIT {
 
 		assertTrue(task.d_last.isFinished());
 		assertTrue(task.isFinished());
-		assertEquals(Collections.<Task>emptyList(), threadHandler.getScheduledTasks());
+		assertEquals(Collections.<Task>emptyList(), threadHandler.getQueuedTaskList());
+	}
+	
+	@Test
+	public void testRemoveCompositeTask() {
+		waitTillDone();
+		
+		ThreadHandler th = ThreadHandler.getInstance();
+
+		SomeCompositeTask task = new SomeCompositeTask();
+		th.scheduleTask(task);
+
+		// wait for first task to finish and subsequent tasks to be enqueued
+		waitTillDone(task.d_first);
+		sleepLongEnough();
+
+		th.remove(task);
+		sleepLongEnough();
+		assertTrue(task.d_first.isFinished());
+
+		assertTrue(task.d_middle1.isAborted());
+		if (d_numCores > 1) {
+			assertTrue(task.d_middle2.isAborted());
+		}
+		assertEquals(0, th.getRunningTasks().size());
+		assertEquals(0, th.getQueuedTaskList().size());
+	}
+	
+	@Test
+	public void testRemoveWaitingCompositeTask() {
+		waitTillDone();
+		
+		ThreadHandler th = ThreadHandler.getInstance();
+		
+		List<Task> tasks = new ArrayList<Task>();
+		for (int i = 0; i < d_numCores; ++i) {
+			tasks.add(new SimpleSuspendableTask(new SuspendableTestThread(300)));
+		}
+
+		SomeCompositeTask composite = new SomeCompositeTask();
+		tasks.add(composite);
+		
+		th.scheduleTasks(tasks);
+		sleepLongEnough();
+
+		th.remove(composite);
+		sleepLongEnough();
+	}
+	
+	@Test
+	public void testRemoveHalfWaitingCompositeTask() {
+		waitTillDone();
+		
+		ThreadHandler th = ThreadHandler.getInstance();
+		
+		List<Task> tasks = new ArrayList<Task>();
+		for (int i = 0; i < d_numCores - 1; ++i) {
+			tasks.add(new SimpleSuspendableTask(new SuspendableTestThread(1000)));
+		}
+
+		SomeCompositeTask composite = new SomeCompositeTask();
+		tasks.add(composite);
+		
+		th.scheduleTasks(tasks);
+		waitTillDone(composite.d_first);
+		sleepLongEnough();
+
+		th.remove(composite);
+		sleepLongEnough();
 	}
 	
 	private void waitTillDone(SimpleTask task) {
@@ -463,7 +531,7 @@ public class ThreadHandlerIT {
 		expected.add(task);
 		expected.add(duplicate);
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
-		assertEquals(expected, threadHandler.getScheduledTasks());
+		assertEquals(expected, threadHandler.getQueuedTaskList());
 	}
 	
 	@Test
@@ -480,7 +548,32 @@ public class ThreadHandlerIT {
 		expected.add(duplicate);
 		expected.add(task);
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
-		assertEquals(expected, threadHandler.getScheduledTasks());
+		assertEquals(expected, threadHandler.getQueuedTaskList());
+	}
+	
+	@Test
+	public void testRemoveCompositeTaskWithDuplicateTask() {
+		ThreadHandler threadHandler = ThreadHandler.getInstance();
+		SomeCompositeTask task = new SomeCompositeTask();
+		SimpleTask duplicate = task.d_first;
+		
+		threadHandler.scheduleTask(duplicate);
+		threadHandler.scheduleTask(task);
+		
+		sleepLongEnough();
+		List<Task> expected = new ArrayList<Task>();
+		expected.add(task);
+		expected.add(duplicate);
+		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
+		assertEquals(expected, threadHandler.getQueuedTaskList());
+		
+		threadHandler.remove(task);
+		sleepLongEnough();
+
+		assertFalse(duplicate.isFinished());
+		expected.remove(task);
+		assertEquals(expected, threadHandler.getQueuedTaskList());
+		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
 	}
 	
 	public static void waitTillDone() {

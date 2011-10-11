@@ -31,14 +31,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.drugis.common.beans.AbstractObservable;
-import org.drugis.common.threading.SuspendableThreadWrapper;
 import org.drugis.common.threading.event.TaskEvent;
 import org.drugis.common.threading.event.TaskEvent.EventType;
 
 public class ThreadHandler extends AbstractObservable {
 	
 	public static final String PROPERTY_RUNNING_THREADS = "runningThreads";
-	public static final String PROPERTY_QUEUED_THREADS = "queuedThreads"; // FIXME: rename to queuedTasks
+	public static final String PROPERTY_QUEUED_TASKS = "queuedTasks"; // FIXME: rename to queuedTasks
 	public static final String PROPERTY_FAILED_TASK = "failedTask";
 	
 	/* Separate thread to start/suspend threads */
@@ -65,7 +64,7 @@ public class ThreadHandler extends AbstractObservable {
 						t.start();
 						d_runningTasks.add(t);
 					}
-					firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
+					firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
 					firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 				}
 				try {
@@ -110,7 +109,7 @@ public class ThreadHandler extends AbstractObservable {
 			if (task.isFinished() || task.isFailed() || task.isAborted()) {
 				d_scheduledTasks.remove(i);
 			} else if (task instanceof SimpleTask) {
-				add(toRun, (SimpleTask)d_scheduledTasks.get(i));
+				add(toRun, (SimpleTask)task);
 				++i;
 			} else if (task instanceof CompositeTask) {
 				CompositeTask compositeTask = (CompositeTask)task;
@@ -150,7 +149,7 @@ public class ThreadHandler extends AbstractObservable {
 		return d_runningTasks.size();
 	}
 	
-	public int getQueuedThreads() {
+	public int getQueuedTasks() {
 		return d_scheduledTasks.size();
 	}
 	
@@ -170,7 +169,7 @@ public class ThreadHandler extends AbstractObservable {
 			// Put new tasks at the front of the queue
 			d_scheduledTasks.addAll(0, newTasks);
 			
-			firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
+			firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
 		}
 	}
 	
@@ -215,7 +214,7 @@ public class ThreadHandler extends AbstractObservable {
 		return tasks;
 	}
 	
-	protected List<Task> getScheduledTasks() {
+	protected List<Task> getQueuedTaskList() {
 		return Collections.unmodifiableList(d_scheduledTasks);
 	}
 
@@ -225,7 +224,7 @@ public class ThreadHandler extends AbstractObservable {
 			d_scheduledTasks.clear();
 			vacuumWrappers();
 		}
-		firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
+		firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
 		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 	}
 
@@ -234,8 +233,17 @@ public class ThreadHandler extends AbstractObservable {
 			thread.terminate();
 		}
 	}
+	
+	public boolean remove(Task t) {
+		if (t instanceof SimpleTask) {
+			return removeSimple((SimpleTask) t);
+		} else if (t instanceof CompositeTask) {
+			return removeComposite((CompositeTask) t);
+		}
+		throw new IllegalArgumentException("Attempt to remove unknown task type: " + t.getClass().getCanonicalName());
+	}
 
-	public boolean remove(SimpleTask t) {
+	private boolean removeSimple(SimpleTask t) {
 		boolean terminated = true;
 		synchronized(d_runningTasks) {
 			if (d_wrappers.get(t) != null) {
@@ -244,10 +252,28 @@ public class ThreadHandler extends AbstractObservable {
 			d_scheduledTasks.remove(t);
 			vacuumWrappers();
 		}
-		firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
+		firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
 		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 		return terminated;
 	}
 	
+	private boolean removeComposite(CompositeTask composite) {
+		boolean terminated = true;
+		synchronized(d_runningTasks) {
+			d_scheduledTasks.remove(composite);
+			if(composite.isStarted()) {
+				for (SimpleTask task : composite.getNextTasks()) {
+					if (!d_scheduledTasks.contains(task)) {
+						if (d_wrappers.get(task) != null) {
+							terminated = terminated && d_wrappers.get(task).terminate();
+						}
+					}
+				}
+			}
+			vacuumWrappers();
+		}		
+		firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
+		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());		return terminated ;
+	}
 
 }
