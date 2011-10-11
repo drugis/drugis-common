@@ -8,7 +8,6 @@ public class SimpleSuspendableTask implements SimpleTask {
 
 	private boolean d_started = false;
 	private boolean d_finished = false;
-	private boolean d_aborted = false;
 	private Throwable d_failure;
 	private String d_str;
 
@@ -52,7 +51,6 @@ public class SimpleSuspendableTask implements SimpleTask {
 		try {
 			d_suspendable.run();
 		} catch (AbortedException e) {
-			d_aborted = true;
 			d_mgr.fireTaskAborted();
 			return;
 		} catch (Throwable e) {
@@ -82,7 +80,7 @@ public class SimpleSuspendableTask implements SimpleTask {
 	}
 
 	public boolean isAborted() {
-		return d_aborted ;
+		return d_suspendable.isAborted();
 	}
 
 	public boolean isSuspended() {

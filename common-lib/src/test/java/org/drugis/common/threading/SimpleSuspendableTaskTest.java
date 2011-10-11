@@ -15,6 +15,7 @@ public class SimpleSuspendableTaskTest {
 		public boolean suspend() { return true; }
 		public boolean wakeUp() { return true; }
 		public boolean abort() { return true; }
+		public boolean isAborted() { return false; }
 	}
 	
 	private AbortedException d_abort = new AbortedException();
@@ -29,6 +30,11 @@ public class SimpleSuspendableTaskTest {
 	class AbortedTask extends FakeSuspendable {
 		public void run() {
 			throw d_abort;
+		}
+		
+		@Override
+		public boolean isAborted() {
+			return true;
 		}
 	}
 	

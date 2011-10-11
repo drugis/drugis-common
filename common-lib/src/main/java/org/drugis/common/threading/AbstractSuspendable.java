@@ -13,7 +13,14 @@ public abstract class AbstractSuspendable implements Suspendable  {
 		return d_threadSuspended;
 	}
 	
+	public synchronized boolean isAborted() {
+		return d_threadTerminated;
+	}
+	
 	public synchronized boolean suspend() {
+		if (isAborted()) {
+			throw new IllegalStateException("Attempt to suspend an aborted task");
+		}
 		d_threadSuspended = true;
 		return true;
 	}

@@ -29,4 +29,8 @@ public class NonSuspendable implements Suspendable {
 	public boolean abort() {
 		return false;
 	}
+
+	public boolean isAborted() {
+		return false;  // cannot be terminated by definition
+	}
 }

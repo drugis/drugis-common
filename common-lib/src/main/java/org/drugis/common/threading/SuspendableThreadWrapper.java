@@ -96,4 +96,8 @@ public class SuspendableThreadWrapper {
 	public String toString() {
 		return d_runnable.toString();
 	}
+
+	public boolean isAborted() {
+		return d_runnable.isAborted();
+	}
 }

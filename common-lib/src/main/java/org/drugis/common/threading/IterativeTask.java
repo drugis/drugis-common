@@ -42,6 +42,7 @@ public class IterativeTask extends SimpleSuspendableTask {
 		public void setReportingInterval(int interval) {
 			d_interval  = interval;
 		}
+
 	}
 	
 	public IterativeTask(IterativeComputation computation, String str) {

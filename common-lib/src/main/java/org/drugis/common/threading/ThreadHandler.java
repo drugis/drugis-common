@@ -52,7 +52,7 @@ public class ThreadHandler extends AbstractObservable {
 					toRun.removeAll(d_runningTasks);
 					for (SuspendableThreadWrapper t : toStop) {
 						if (!t.isTerminated()) {
-							if (t.suspend()) {
+							if (t.isAborted() || t.suspend()) {
 								d_runningTasks.remove(t);
 							}
 						} else {
@@ -90,6 +90,8 @@ public class ThreadHandler extends AbstractObservable {
 	LinkedList<SuspendableThreadWrapper> d_runningTasks;
 	Thread d_cleaner;
 	private TaskFailureObserver d_failureObserver = new TaskFailureObserver();
+	Map<SimpleTask, SuspendableThreadWrapper> d_wrappers = new HashMap<SimpleTask, SuspendableThreadWrapper>();
+	
 	
 	private static ThreadHandler d_singleton;
 	
@@ -172,8 +174,6 @@ public class ThreadHandler extends AbstractObservable {
 		}
 	}
 	
-	Map<SimpleTask, SuspendableThreadWrapper> d_wrappers = new HashMap<SimpleTask, SuspendableThreadWrapper>();
-	
 	private LinkedList<SuspendableThreadWrapper> getWrappers(Collection<SimpleTask> newRunnables) {
 		vacuumWrappers();
 		
@@ -233,6 +233,20 @@ public class ThreadHandler extends AbstractObservable {
 		for (SuspendableThreadWrapper thread : tasks) {
 			thread.terminate();
 		}
+	}
+
+	public boolean remove(SimpleTask t) {
+		boolean terminated = true;
+		synchronized(d_runningTasks) {
+			if (d_wrappers.get(t) != null) {
+				terminated = d_wrappers.get(t).terminate();
+			}
+			d_scheduledTasks.remove(t);
+			vacuumWrappers();
+		}
+		firePropertyChange(PROPERTY_QUEUED_THREADS, null, d_scheduledTasks.size());
+		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
+		return terminated;
 	}
 	
 

@@ -26,4 +26,9 @@ public interface Suspendable extends Runnable {
 	 * @return false if not suspendable.
 	 */
 	public boolean abort();
+	
+	/**
+	 * @return whether the run is aborted or not.
+	 */
+	public boolean isAborted();
 }
