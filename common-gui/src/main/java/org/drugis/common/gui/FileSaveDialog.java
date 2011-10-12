@@ -12,11 +12,11 @@ abstract public class FileSaveDialog extends FileDialog {
 		super(frame, extension, description);
 	}
 
-	public void saveActions(Component frame) {
+	public void saveActions() {
 		String message = "Couldn't save file ";
 		
-		int returnValue = d_fileChooser.showSaveDialog(frame);
-		handleFileDialogResult(frame, returnValue, message);
+		int returnValue = d_fileChooser.showSaveDialog(d_frame);
+		handleFileDialogResult(returnValue, message);
 	}
 
 	@Override

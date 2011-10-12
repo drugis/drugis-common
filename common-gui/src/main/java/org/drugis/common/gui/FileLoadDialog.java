@@ -19,11 +19,11 @@ public abstract class FileLoadDialog extends FileDialog {
 		super(frame, extension, description);
 	}
 
-	public void loadActions(Component frame) {
+	public void loadActions() {
 		String message = "Couldn't open file ";
 
-		d_returnValue = d_fileChooser.showOpenDialog(frame);
-		handleFileDialogResult(frame, d_returnValue, message);
+		d_returnValue = d_fileChooser.showOpenDialog(d_frame);
+		handleFileDialogResult(d_returnValue, message);
 	}
 	
 	public int getReturnValue() {

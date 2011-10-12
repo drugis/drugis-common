@@ -61,6 +61,7 @@ public abstract class FileDialog {
 
 	static File d_currentDirectory = null;
 	protected JFileChooser d_fileChooser;
+	protected final Component d_frame;
 	
     public static String fixExtension(String absPath, String ext) {
     	if (ext == null || ext.equals("")) {
@@ -90,6 +91,7 @@ public abstract class FileDialog {
 	}
 
 	public FileDialog(Component frame, String [][] extension, String [] description) {
+		d_frame = frame;
 		d_fileChooser = new JFileChooser();
 		Filter defaultFilter = null;
 		for(int i=0; i< extension.length; i++) {
@@ -108,7 +110,7 @@ public abstract class FileDialog {
 		d_fileChooser.setVisible(visible);
 	}
 	
-	protected void handleFileDialogResult(Component frame, int returnVal, String message) {
+	protected void handleFileDialogResult(int returnVal, String message) {
 		d_currentDirectory = d_fileChooser.getCurrentDirectory();
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String path = getPath();

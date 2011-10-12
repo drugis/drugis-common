@@ -46,7 +46,7 @@ public class ImageExporter {
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
 		};
-		dialog.saveActions(frame);
+		dialog.saveActions();
 	}
 	
 	public interface DrawCommand<T, C extends Graphics2D> {
@@ -124,7 +124,7 @@ public class ImageExporter {
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
 		};
-		dialog.saveActions(frame);
+		dialog.saveActions();
 	}
 	
 	protected static void writeSVG(String path, JGraph graph, int width, int height) {
@@ -149,7 +149,7 @@ public class ImageExporter {
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
 		};
-		dialog.saveActions(frame);
+		dialog.saveActions();
 	}
 
 	protected static void writeSVG(String path, JFreeChart chart, int width, int height) {
