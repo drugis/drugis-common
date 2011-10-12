@@ -261,7 +261,7 @@ public class ThreadHandlerIT {
 		th.scheduleTasks(runthreads);
 		assertEquals(d_numCores + 2, th.getQueuedTasks());
 		
-		th.remove(t);
+		th.abortTask(t);
 		assertEquals(d_numCores + 1, th.getQueuedTasks());
 		
 		waitTillDone();
@@ -294,7 +294,7 @@ public class ThreadHandlerIT {
 		sleepLongEnough();
 		assertEquals(1, th.getRunningThreads());
 		
-		th.remove(task);
+		th.abortTask(task);
 		
 		sleepLongEnough();
 		assertEquals(0, th.getRunningThreads());
@@ -330,7 +330,7 @@ public class ThreadHandlerIT {
 		sleepLongEnough();
 		assertEquals(1, th.getRunningThreads());
 		
-		assertFalse(th.remove(t));
+		assertFalse(th.abortTask(t));
 
 		sleepLongEnough();
 		assertEquals(1, th.getRunningThreads());
@@ -454,7 +454,7 @@ public class ThreadHandlerIT {
 		waitTillDone(task.d_first);
 		sleepLongEnough();
 
-		th.remove(task);
+		th.abortTask(task);
 		sleepLongEnough();
 		assertTrue(task.d_first.isFinished());
 
@@ -483,7 +483,7 @@ public class ThreadHandlerIT {
 		th.scheduleTasks(tasks);
 		sleepLongEnough();
 
-		th.remove(composite);
+		th.abortTask(composite);
 		sleepLongEnough();
 	}
 	
@@ -505,7 +505,7 @@ public class ThreadHandlerIT {
 		waitTillDone(composite.d_first);
 		sleepLongEnough();
 
-		th.remove(composite);
+		th.abortTask(composite);
 		sleepLongEnough();
 	}
 	
@@ -567,7 +567,7 @@ public class ThreadHandlerIT {
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
 		assertEquals(expected, threadHandler.getQueuedTaskList());
 		
-		threadHandler.remove(task);
+		threadHandler.abortTask(task);
 		sleepLongEnough();
 
 		assertFalse(duplicate.isFinished());

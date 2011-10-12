@@ -234,16 +234,16 @@ public class ThreadHandler extends AbstractObservable {
 		}
 	}
 	
-	public boolean remove(Task t) {
+	public boolean abortTask(Task t) {
 		if (t instanceof SimpleTask) {
-			return removeSimple((SimpleTask) t);
+			return abortSimple((SimpleTask) t);
 		} else if (t instanceof CompositeTask) {
-			return removeComposite((CompositeTask) t);
+			return abortComposite((CompositeTask) t);
 		}
 		throw new IllegalArgumentException("Attempt to remove unknown task type: " + t.getClass().getCanonicalName());
 	}
 
-	private boolean removeSimple(SimpleTask t) {
+	private boolean abortSimple(SimpleTask t) {
 		boolean terminated = true;
 		synchronized(d_runningTasks) {
 			if (d_wrappers.get(t) != null) {
@@ -257,7 +257,7 @@ public class ThreadHandler extends AbstractObservable {
 		return terminated;
 	}
 	
-	private boolean removeComposite(CompositeTask composite) {
+	private boolean abortComposite(CompositeTask composite) {
 		boolean terminated = true;
 		synchronized(d_runningTasks) {
 			d_scheduledTasks.remove(composite);
