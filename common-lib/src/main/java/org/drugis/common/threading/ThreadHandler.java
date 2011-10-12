@@ -273,7 +273,8 @@ public class ThreadHandler extends AbstractObservable {
 			vacuumWrappers();
 		}		
 		firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
-		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());		return terminated ;
+		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
+		return terminated ;
 	}
 
 }

@@ -35,7 +35,7 @@ public class ImageExporter {
 	public static void writeImage(Component frame, final JComponent p, final int width, final int height) {
 		String [] extensions = {"png", "svg"};
 		String [] descriptions = {"PNG files", "SVG files"};
-		new FileSaveDialog(frame, extensions, descriptions) {
+		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
 			@Override
 			public void doAction(String path, String extension) {
 				if (extension.equals("png"))
@@ -46,6 +46,7 @@ public class ImageExporter {
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
 		};
+		dialog.saveActions(frame);
 	}
 	
 	public interface DrawCommand<T, C extends Graphics2D> {
@@ -112,7 +113,7 @@ public class ImageExporter {
 	public static void writeImage(Component frame, final JGraph p, final int width, final int height) {
 		String [] extensions = {"png", "svg"};
 		String [] descriptions = {"PNG files", "SVG files"};
-		new FileSaveDialog(frame, extensions, descriptions) {
+		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
 			@Override
 			public void doAction(String path, String extension) {
 				if (extension.equals("png"))
@@ -123,6 +124,7 @@ public class ImageExporter {
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
 		};
+		dialog.saveActions(frame);
 	}
 	
 	protected static void writeSVG(String path, JGraph graph, int width, int height) {
@@ -136,7 +138,7 @@ public class ImageExporter {
 	public static void writeImage(Component frame, final JFreeChart p, final int width, final int height) {
 		String [] extensions = {"png", "svg"};
 		String [] descriptions = {"PNG files", "SVG files"};
-		new FileSaveDialog(frame, extensions, descriptions) {
+		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
 			@Override
 			public void doAction(String path, String extension) {
 				if (extension.equals("png"))
@@ -147,6 +149,7 @@ public class ImageExporter {
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
 		};
+		dialog.saveActions(frame);
 	}
 
 	protected static void writeSVG(String path, JFreeChart chart, int width, int height) {
