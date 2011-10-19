@@ -1,22 +1,22 @@
 package org.drugis.common;
 
+import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public class ImageLoader {
 	
-	static private Map<String, Icon> icons;
+	static private Map<String, ImageIcon> icons;
 	static private String imagePath;
 	
 	public static void setImagePath(String _imagePath) {
 		imagePath = _imagePath;
-		icons = new HashMap<String, Icon>();
+		icons = new HashMap<String, ImageIcon>();
 	}
 	
-	public static Icon getIcon(String name) {
+	public static ImageIcon getIcon(String name) {
 		if (icons.containsKey(name)) {
 			return icons.get(name);
 		} else {
@@ -31,6 +31,10 @@ public class ImageLoader {
 		}
 	}
 
+	public static Image getImage(String name) {
+		return getIcon(name) == null ? null : getIcon(name).getImage();
+	}
+	
 	private static String deriveGfxPath(String name) {
 		return imagePath + name;
 	}
