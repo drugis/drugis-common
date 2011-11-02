@@ -40,21 +40,6 @@ import com.jgoodies.binding.list.ObservableList;
 
 
 public class ContentAwareListModelTest {
-	public class MyBean extends AbstractObservable {
-		private String d_name;
-		public MyBean(String name) {
-			setName(name);
-		}
-		public void setName(String newValue) {
-			String oldValue = d_name;
-			d_name = newValue;
-			firePropertyChange("name", oldValue, newValue);
-		}
-		public String getName() {
-			return d_name;
-		}
-	}
-
 	private ObservableList<MyBean> d_list;
 	private ContentAwareListModel<MyBean> d_contentAware;
 
