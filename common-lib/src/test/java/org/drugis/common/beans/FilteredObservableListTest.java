@@ -87,6 +87,18 @@ public class FilteredObservableListTest {
 		d_outer.remove("Gert");
 	}
 	
+	
+	@Test
+	public void testContentsUpdateAddStart() {
+		ListDataListener mock = createStrictMock(ListDataListener.class);
+		mock.intervalAdded(ListDataEventMatcher.eqListDataEvent(new ListDataEvent(d_outer, ListDataEvent.INTERVAL_ADDED, 0, 0)));
+		replay(mock);
+		d_outer.addListDataListener(mock);
+		d_inner.add(0, "Bart");
+		assertEquals("Bart", d_outer.get(0));
+		verify(mock);
+	}
+	
 	@Test
 	public void testContentsUpdateAddEnd() {
 		ListDataListener mock = createStrictMock(ListDataListener.class);
@@ -193,6 +205,20 @@ public class FilteredObservableListTest {
 		d_inner.set(2, "Kees");
 		assertEquals(Arrays.asList("Gert", "Kees"), d_outer);
 		verify(mock);
+	}
+	
+	@Test
+	public void testContentsUpdateFirstElement() {
+		d_inner.set(0, "Gaart");
+		assertEquals(Arrays.asList("Jan"), d_outer);
+		d_inner.set(0, "Gert");
+		assertEquals(Arrays.asList("Gert", "Jan"), d_outer);
+	}
+	
+	@Test
+	public void testContentsUpdateLastElement() {
+		d_inner.set(3, "Klees");
+		assertEquals(Arrays.asList("Gert", "Jan", "Klees"), d_outer);
 	}
 	
 	@Test

@@ -167,7 +167,7 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 
 	private void elementChanged(int elm) {
 		int idx = Collections.binarySearch(d_indices, elm);
-		if (idx > 0) {
+		if (idx >= 0) {
 			if (d_filter.accept(d_inner.get(elm))) {
 				d_listenerManager.fireContentsChanged(idx, idx);
 			} else {
