@@ -41,8 +41,17 @@ public class TransformedObservableListTest {
 		d_transformed.addListDataListener(mock);
 		mock.intervalRemoved(ListDataEventMatcher.eqListDataEvent(
 				new ListDataEvent(d_transformed, ListDataEvent.INTERVAL_REMOVED, 0, 0)));
+		mock.intervalAdded(ListDataEventMatcher.eqListDataEvent(
+				new ListDataEvent(d_transformed, ListDataEvent.INTERVAL_ADDED, 1, 1)));
+		mock.contentsChanged(ListDataEventMatcher.eqListDataEvent(
+				new ListDataEvent(d_transformed, ListDataEvent.CONTENTS_CHANGED, 2, 2)));
 		EasyMock.replay(mock);
 		d_nested.remove(0);
+		d_nested.add(1, "18");
+		d_nested.set(2, "99");
+		d_transformed.removeListDataListener(mock);
+		d_nested.add("8");
 		EasyMock.verify(mock);
+		assertEquals(Arrays.asList(15, 18, 99, 8), d_transformed);
 	}
 }
