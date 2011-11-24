@@ -19,6 +19,12 @@ public class LayoutUtil {
 		layout.appendRow(RowSpec.decode("p"));
 	}
 	
+	public static int addRow(FormLayout layout, int rows, String spacingSpec) {
+		layout.appendRow(RowSpec.decode(spacingSpec));
+		layout.appendRow(RowSpec.decode("p"));
+		return rows + 2;
+	}
+	
 	public static int addRow(FormLayout layout, int rows) {
 		LayoutUtil.addRow(layout);
 		return rows + 2;
