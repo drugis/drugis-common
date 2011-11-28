@@ -130,7 +130,7 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 			return; // nothing to remove
 		}
 		int last = firstOver(upper);
-		d_indices.removeAll(d_indices.subList(first, last));
+		d_indices.removeAll(new ArrayList<Integer>(d_indices.subList(first, last)));
 
 		final int delta = upper - lower + 1;
 		updateIndices(first, -delta); // decrement indices past removal point
