@@ -108,4 +108,19 @@ public class ContentAwareListModel<T extends Observable> extends AbstractList<T>
 	public void removeListDataListener(ListDataListener l) {
 		d_manager.removeListDataListener(l);
 	}
+	
+	@Override
+	public void add(int index, T element) {
+		d_nested.add(index, element);
+	}
+	
+	@Override
+	public T set(int index, T element) {
+		return d_nested.set(index, element);
+	}
+	
+	@Override
+	public T remove(int index) {
+		return d_nested.remove(index);
+	}
 }
