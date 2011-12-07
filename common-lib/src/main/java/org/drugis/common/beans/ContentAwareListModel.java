@@ -21,14 +21,11 @@ package org.drugis.common.beans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-
-import org.drugis.common.event.ListDataListenerManager;
 
 import com.jgoodies.binding.beans.Observable;
 import com.jgoodies.binding.list.ObservableList;
@@ -37,12 +34,11 @@ import com.jgoodies.binding.list.ObservableList;
  * ListModel that wraps an ObservableList. Will fire events when the ObservableList does.
  * In addition, it will fireContentsChanged when certain properties of the contained Observables change, or all properties if none are specified.
  */
-public class ContentAwareListModel<T extends Observable> extends AbstractList<T> implements ObservableList<T> {
+public class ContentAwareListModel<T extends Observable> extends AbstractObservableList<T> {
 	private static final long serialVersionUID = 8722229007151818730L;
 	
 	private ObservableList<T> d_nested;
 	@SuppressWarnings("unused") private ListPropertyChangeProxy<T> d_proxy;
-	private ListDataListenerManager d_manager = new ListDataListenerManager(this);
 	private List<String> d_properties;
 	
 	public ContentAwareListModel(ObservableList<T> list) {
@@ -57,13 +53,13 @@ public class ContentAwareListModel<T extends Observable> extends AbstractList<T>
 
 		d_nested.addListDataListener(new ListDataListener() {
 			public void intervalRemoved(ListDataEvent e) {
-				d_manager.fireIntervalRemoved(e.getIndex0(), e.getIndex1());
+				fireIntervalRemoved(e.getIndex0(), e.getIndex1());
 			}
 			public void intervalAdded(ListDataEvent e) {
-				d_manager.fireIntervalAdded(e.getIndex0(), e.getIndex1());
+				fireIntervalAdded(e.getIndex0(), e.getIndex1());
 			}
 			public void contentsChanged(ListDataEvent e) {
-				d_manager.fireContentsChanged(e.getIndex0(), e.getIndex1());
+				fireContentsChanged(e.getIndex0(), e.getIndex1());
 			}
 		});
 
@@ -71,7 +67,7 @@ public class ContentAwareListModel<T extends Observable> extends AbstractList<T>
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (d_properties ==  null || d_properties.contains(evt.getPropertyName())) {
 					int idx = d_nested.indexOf(evt.getSource());
-					d_manager.fireContentsChanged(idx, idx);
+					fireContentsChanged(idx, idx);
 				}
 			}
 		});
@@ -87,26 +83,9 @@ public class ContentAwareListModel<T extends Observable> extends AbstractList<T>
 	public int size() {
 		return d_nested.size();
 	}
-
-	public Object getElementAt(int idx) {
-		return d_nested.getElementAt(idx);
-	}
-
-	public int getSize() {
-		return d_nested.getSize();
-	}
 	
 	public ObservableList<T> getList() {
 		return d_nested;
-	}
-
-
-	public void addListDataListener(ListDataListener l) {
-		d_manager.addListDataListener(l);
-	}
-
-	public void removeListDataListener(ListDataListener l) {
-		d_manager.removeListDataListener(l);
 	}
 	
 	@Override

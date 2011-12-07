@@ -9,7 +9,7 @@ import org.drugis.common.event.ListDataListenerManager;
 import com.jgoodies.binding.list.ObservableList;
 
 public abstract class AbstractObservableList<E> extends AbstractList<E> implements ObservableList<E> {
-	private ListDataListenerManager d_manager = new ListDataListenerManager(this);
+	protected final ListDataListenerManager d_manager = new ListDataListenerManager(this);
 
 	public abstract E get(int index);
 	public abstract int size();

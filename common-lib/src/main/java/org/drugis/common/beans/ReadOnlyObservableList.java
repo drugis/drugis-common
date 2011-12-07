@@ -1,7 +1,6 @@
 package org.drugis.common.beans;
 
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import org.drugis.common.event.ListDataEventProxy;
 
 import com.jgoodies.binding.list.ObservableList;
 
@@ -13,17 +12,7 @@ public class ReadOnlyObservableList<E> extends AbstractObservableList<E> {
 
 	public ReadOnlyObservableList(ObservableList<E> nested) {
 		d_nested = nested;
-		d_nested.addListDataListener(new ListDataListener() {
-			public void intervalRemoved(ListDataEvent e) {
-				fireIntervalRemoved(e.getIndex0(), e.getIndex1());
-			}
-			public void intervalAdded(ListDataEvent e) {
-				fireIntervalAdded(e.getIndex0(), e.getIndex1());
-			}
-			public void contentsChanged(ListDataEvent e) {
-				fireContentsChanged(e.getIndex0(), e.getIndex1());
-			}
-		});
+		d_nested.addListDataListener(new ListDataEventProxy(d_manager));
 	}
 
 	@Override

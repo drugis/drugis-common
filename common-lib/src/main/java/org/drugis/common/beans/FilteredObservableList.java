@@ -24,7 +24,6 @@
 
 package org.drugis.common.beans;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,14 +31,12 @@ import java.util.List;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.drugis.common.event.ListDataListenerManager;
-
 import com.jgoodies.binding.list.ObservableList;
 
 /**
  * An ObservableList that provides a filtered view on another ObservableList.
  */
-public class FilteredObservableList<E> extends AbstractList<E> implements ObservableList<E> {
+public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	public interface Filter<T> {
 		public boolean accept(T obj);
 	}
@@ -47,7 +44,6 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 	private final ObservableList<E> d_inner;
 	private Filter<E> d_filter;
 	private ArrayList<Integer> d_indices = new ArrayList<Integer>();
-	private ListDataListenerManager d_listenerManager = new ListDataListenerManager(this);
 
 	public FilteredObservableList(ObservableList<E> inner, Filter<E> filter) {
 		d_inner = inner;
@@ -81,11 +77,11 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 		int oldSize = size();
 		if(!isEmpty()) {
 			d_indices.clear();
-			d_listenerManager.fireIntervalRemoved(0, oldSize - 1);
+			fireIntervalRemoved(0, oldSize - 1);
 		}
 		initializeIndices();
 		if(!isEmpty()) {
-			d_listenerManager.fireIntervalAdded(0, size() - 1);
+			fireIntervalAdded(0, size() - 1);
 		}
 	}
 
@@ -108,22 +104,6 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 		return d_indices.size();
 	}
 
-	public Object getElementAt(int index) {
-		return get(index);
-	}
-
-	public int getSize() {
-		return size();
-	}
-
-	public void addListDataListener(ListDataListener l) {
-		d_listenerManager.addListDataListener(l);
-	}
-
-	public void removeListDataListener(ListDataListener l) {
-		d_listenerManager.removeListDataListener(l);
-	}
-
 	private void intervalRemoved(final int lower, final int upper) {
 		final int first = firstAtLeast(lower);
 		if (first >= d_indices.size()) {
@@ -136,7 +116,7 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 		updateIndices(first, -delta); // decrement indices past removal point
 
 		if (last > first) {
-			d_listenerManager.fireIntervalRemoved(first, last - 1);
+			fireIntervalRemoved(first, last - 1);
 		}
 	}
 
@@ -153,7 +133,7 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 		}
 		final int inserted = d_indices.size() - oldSize;
 		if (inserted > 0) {
-			d_listenerManager.fireIntervalAdded(first, first + inserted - 1);
+			fireIntervalAdded(first, first + inserted - 1);
 		}
 	}
 	
@@ -169,15 +149,15 @@ public class FilteredObservableList<E> extends AbstractList<E> implements Observ
 		int idx = Collections.binarySearch(d_indices, elm);
 		if (idx >= 0) {
 			if (d_filter.accept(d_inner.get(elm))) {
-				d_listenerManager.fireContentsChanged(idx, idx);
+				fireContentsChanged(idx, idx);
 			} else {
 				d_indices.remove(idx);
-				d_listenerManager.fireIntervalRemoved(idx, idx);
+				fireIntervalRemoved(idx, idx);
 			}
 		} else {
 			if (d_filter.accept(d_inner.get(elm))) {
 				d_indices.add(-(idx + 1), elm);
-				d_listenerManager.fireIntervalAdded(-(idx + 1), -(idx + 1));
+				fireIntervalAdded(-(idx + 1), -(idx + 1));
 			} else {
 				// no change
 			}

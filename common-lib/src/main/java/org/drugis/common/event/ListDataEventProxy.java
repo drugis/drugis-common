@@ -24,26 +24,24 @@
 
 package org.drugis.common.event;
 
-import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 /**
- * Listen to events from a ListModel and re-emit them is if they are coming from a different source. 
+ * Listen to events from a ListModel and re-emit through the given ListDataListenerManager. 
  */
-public class ListDataEventProxy extends ListDataListenerManager {
-	public ListDataEventProxy(Object source, ListModel model) {
-		super(source);
-		model.addListDataListener(new ListDataListener() {
-			public void intervalRemoved(ListDataEvent e) {
-				fireIntervalRemoved(e.getIndex0(), e.getIndex1());
-			}
-			public void intervalAdded(ListDataEvent e) {
-				fireIntervalAdded(e.getIndex0(), e.getIndex1());
-			}
-			public void contentsChanged(ListDataEvent e) {
-				fireContentsChanged(e.getIndex0(), e.getIndex1());
-			}
-		});
+public class ListDataEventProxy implements ListDataListener {
+	private final ListDataListenerManager d_manager;
+	public ListDataEventProxy(ListDataListenerManager manager) {
+		d_manager = manager;
+	}
+	public void intervalRemoved(ListDataEvent e) {
+		d_manager.fireIntervalRemoved(e.getIndex0(), e.getIndex1());
+	}
+	public void intervalAdded(ListDataEvent e) {
+		d_manager.fireIntervalAdded(e.getIndex0(), e.getIndex1());
+	}
+	public void contentsChanged(ListDataEvent e) {
+		d_manager.fireContentsChanged(e.getIndex0(), e.getIndex1());
 	}
 }
