@@ -44,21 +44,21 @@ public class ListDataListenerManager {
 
 	public void fireIntervalAdded(int index0, int index1) {
 		ListDataEvent evt = new ListDataEvent(d_source, ListDataEvent.INTERVAL_ADDED, index0, index1);
-		for (ListDataListener l : d_listeners) {
+		for (ListDataListener l : copyListeners()) {
 			l.intervalAdded(evt);
 		}
 	}
 
 	public void fireIntervalRemoved(int index0, int index1) {
 		ListDataEvent evt = new ListDataEvent(d_source, ListDataEvent.INTERVAL_REMOVED, index0, index1);
-		for (ListDataListener l : d_listeners) {
+		for (ListDataListener l : copyListeners()) {
 			l.intervalRemoved(evt);
 		}
 	}
 	
 	public void fireContentsChanged(int index0, int index1) {
 		ListDataEvent evt = new ListDataEvent(d_source, ListDataEvent.CONTENTS_CHANGED, index0, index1);
-		for (ListDataListener l : d_listeners) {
+		for (ListDataListener l : copyListeners()) {
 			l.contentsChanged(evt);
 		}
 	}
@@ -69,5 +69,9 @@ public class ListDataListenerManager {
 
 	public void removeListDataListener(ListDataListener l) {
 		d_listeners.remove(l);
+	}
+
+	private List<ListDataListener> copyListeners() {
+		return new ArrayList<ListDataListener>(d_listeners);
 	}
 }
