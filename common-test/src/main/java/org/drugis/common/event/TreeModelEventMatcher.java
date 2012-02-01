@@ -1,5 +1,7 @@
 package org.drugis.common.event;
 
+import static org.easymock.EasyMock.reportMatcher;
+
 import java.util.Arrays;
 
 import javax.swing.event.TreeModelEvent;
@@ -32,4 +34,8 @@ public class TreeModelEventMatcher implements IArgumentMatcher {
 		return false;
 	}
 
+    public static TreeModelEvent eqTreeModelEvent(TreeModelEvent in) {
+        reportMatcher(new TreeModelEventMatcher(in));
+        return null;
+    }
 }
