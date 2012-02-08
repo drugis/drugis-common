@@ -29,6 +29,15 @@
 				</configuration>
 			</plugin>
 
+			<!-- java compiler settings -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
 			<!-- attach source to release -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
