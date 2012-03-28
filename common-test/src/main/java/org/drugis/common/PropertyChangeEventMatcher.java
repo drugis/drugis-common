@@ -9,9 +9,11 @@ import org.easymock.IArgumentMatcher;
 
 class PropertyChangeEventMatcher implements IArgumentMatcher {
 	private PropertyChangeEvent d_expected;
+	private final boolean d_ignoreValues;
 
-	public PropertyChangeEventMatcher(PropertyChangeEvent expected) {
+	public PropertyChangeEventMatcher(PropertyChangeEvent expected, boolean ignoreValues) {
 		d_expected = expected;
+		d_ignoreValues = ignoreValues;
 	}
 
 	public void appendTo(StringBuffer buffer) {
@@ -37,7 +39,7 @@ class PropertyChangeEventMatcher implements IArgumentMatcher {
 		
 		return eq(actual.getSource(), d_expected.getSource()) &&
 			eq(actual.getPropertyName(), d_expected.getPropertyName()) &&
-			eq(actual.getOldValue(), d_expected.getOldValue()) &&
-			eq(actual.getNewValue(), d_expected.getNewValue());
+			( d_ignoreValues || eq(actual.getOldValue(), d_expected.getOldValue()) ) &&
+			( d_ignoreValues || eq(actual.getNewValue(), d_expected.getNewValue()) );
 	}
 }

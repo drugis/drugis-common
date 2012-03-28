@@ -163,7 +163,12 @@ public class JUnitUtil {
 	}
 
 	public static PropertyChangeEvent eqPropertyChangeEvent(PropertyChangeEvent in) {
-	    reportMatcher(new PropertyChangeEventMatcher(in));
+	    reportMatcher(new PropertyChangeEventMatcher(in, false));
+	    return null;
+	}
+
+	public static PropertyChangeEvent eqPropertyChangeEventIgnoreValues(PropertyChangeEvent in) {
+	    reportMatcher(new PropertyChangeEventMatcher(in, true));
 	    return null;
 	}
 	
