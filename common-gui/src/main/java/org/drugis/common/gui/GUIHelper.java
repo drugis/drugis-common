@@ -12,11 +12,14 @@ import java.util.regex.Pattern;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.drugis.common.ImageLoader;
 
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.windows.WindowsLookAndFeel;
 
 public class GUIHelper {
+	
+	public static final ImageLoader IMAGELOADER = new ImageLoader("/org/drugis/common/gui"); 
 
 	public static void initializeLookAndFeel() {
 		try {

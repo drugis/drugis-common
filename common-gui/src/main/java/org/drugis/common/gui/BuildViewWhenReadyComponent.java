@@ -29,15 +29,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Random;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import org.drugis.common.ImageLoader;
 
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
@@ -49,11 +45,6 @@ public class BuildViewWhenReadyComponent extends JPanel {
 	private final String d_message;
 	
 	private static final String ICON_LOADING_LARGE = "loader32.gif";
-	private static final Icon s_loading = getLoadingIcon();
-
-	private static Icon getLoadingIcon() {
-		return new ImageIcon(BuildViewWhenReadyComponent.class.getResource(ICON_LOADING_LARGE));
-	}
 	
 	/**
 	 * Only show (build) the component once the value model has true. 
@@ -102,7 +93,7 @@ public class BuildViewWhenReadyComponent extends JPanel {
 			public void run() {
 				setVisible(false);
 				removeAll();
-				JLabel spinner = new JLabel(s_loading);
+				JLabel spinner = new JLabel(GUIHelper.IMAGELOADER.getIcon(ICON_LOADING_LARGE));
 				JLabel label = new JLabel(d_message);
 				JPanel nested = new JPanel(new BorderLayout());
 				nested.add(spinner, BorderLayout.CENTER);
@@ -116,7 +107,6 @@ public class BuildViewWhenReadyComponent extends JPanel {
 	}
 
 	public static void main(String [] args) throws InterruptedException {
-		ImageLoader.setImagePath("/org/drugis/addis/gfx/");
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel(new BorderLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
