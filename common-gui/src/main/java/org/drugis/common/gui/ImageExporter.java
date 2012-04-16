@@ -10,38 +10,24 @@ import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.ext.awt.image.codec.imageio.ImageIOPNGImageWriter;
-import org.apache.batik.ext.awt.image.spi.ImageWriterRegistry;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.svggen.SwingSVGPrettyPrint;
-import org.drugis.common.gui.FileSaveDialog;
 import org.jfree.chart.JFreeChart;
 import org.jgraph.JGraph;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
 public class ImageExporter {
 	
 	public static void writeImage(Component frame, final JComponent p, final int width, final int height) {
-		String [] extensions = {"png", "svg"};
-		String [] descriptions = {"PNG files", "SVG files"};
+		String [] extensions = {"png"};
+		String [] descriptions = {"PNG files"};
 		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
 			@Override
 			public void doAction(String path, String extension) {
 				if (extension.equals("png"))
 					writePNG(path, p, width, height);
-				else if (extension.equals("svg"))
-					writeSVG(path, p, width, height);
 				else
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
@@ -66,40 +52,6 @@ public class ImageExporter {
 		writePNG(path, bufferedImage);
 	}
 	
-	public static <T> void writeSVG(String path, DrawCommand<T, SVGGraphics2D> drawer, T toDraw, Dimension dim) {
-        // Get a DOMImplementation and create an XML document
-        DOMImplementation domImpl =
-            GenericDOMImplementation.getDOMImplementation();
-        // Create an instance of org.w3c.dom.Document.
-        String svgNS = "http://www.w3.org/2000/svg";
-        Document document = domImpl.createDocument(svgNS, "svg", null);
-        // Create an instance of the SVG Generator
-        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-		// draw the chart in the SVG generator
-		svgGenerator.setSVGCanvasSize(dim);
-		ImageWriterRegistry.getInstance().register(new ImageIOPNGImageWriter());
-		drawer.draw(toDraw, svgGenerator, dim);
-		
-        // Write svg file
-        OutputStream outputStream;
-		try {
-			outputStream = new FileOutputStream(path);
-	        Writer out = new OutputStreamWriter(outputStream, "UTF-8");
-	        svgGenerator.stream(out, true /* use css */);						
-	        outputStream.flush();
-	        outputStream.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public static void writeSVG(String path, JComponent p, int width, int height) {
-		writeSVG(path, new DrawCommand<JComponent, SVGGraphics2D>() {
-			public void draw(JComponent toDraw, SVGGraphics2D canvas, Dimension dim) {
-				SwingSVGPrettyPrint.print(toDraw, canvas);
-			}
-		}, p, new Dimension(width, height));
-	}
 
 	protected static void writePNG(String path, JComponent p, int width, int height) {
 		writePNG(path,  new DrawCommand<JComponent, Graphics2D>() {
@@ -111,40 +63,13 @@ public class ImageExporter {
 
 
 	public static void writeImage(Component frame, final JGraph p, final int width, final int height) {
-		String [] extensions = {"png", "svg"};
-		String [] descriptions = {"PNG files", "SVG files"};
+		String [] extensions = {"png"};
+		String [] descriptions = {"PNG files"};
 		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
 			@Override
 			public void doAction(String path, String extension) {
 				if (extension.equals("png"))
 					writePNG(path, p, width, height);
-				else if (extension.equals("svg"))
-					writeSVG(path, p, width, height);
-				else
-					throw new IllegalArgumentException("Unknown extension " + extension);
-			}
-		};
-		dialog.saveActions();
-	}
-	
-	protected static void writeSVG(String path, JGraph graph, int width, int height) {
-		writeSVG(path, new DrawCommand<JGraph, SVGGraphics2D>() {
-			public void draw(JGraph toDraw, SVGGraphics2D canvas, Dimension dim) {
-		        toDraw.paint(canvas);
-			}
-		}, graph, new Dimension(width, height));
-	}
-	
-	public static void writeImage(Component frame, final JFreeChart p, final int width, final int height) {
-		String [] extensions = {"png", "svg"};
-		String [] descriptions = {"PNG files", "SVG files"};
-		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
-			@Override
-			public void doAction(String path, String extension) {
-				if (extension.equals("png"))
-					writePNG(path, p, width, height);
-				else if (extension.equals("svg"))
-					writeSVG(path, p, width, height);
 				else
 					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
@@ -152,12 +77,19 @@ public class ImageExporter {
 		dialog.saveActions();
 	}
 
-	protected static void writeSVG(String path, JFreeChart chart, int width, int height) {
-		writeSVG(path, new DrawCommand<JFreeChart, SVGGraphics2D>() {
-			public void draw(JFreeChart toDraw, SVGGraphics2D canvas, Dimension dim) {
-				toDraw.draw(canvas, new Rectangle(dim));
+	public static void writeImage(Component frame, final JFreeChart p, final int width, final int height) {
+		String [] extensions = {"png"};
+		String [] descriptions = {"PNG files"};
+		FileSaveDialog dialog = new FileSaveDialog(frame, extensions, descriptions) {
+			@Override
+			public void doAction(String path, String extension) {
+				if (extension.equals("png"))
+					writePNG(path, p, width, height);
+				else
+					throw new IllegalArgumentException("Unknown extension " + extension);
 			}
-		}, chart, new Dimension(width, height));
+		};
+		dialog.saveActions();
 	}
 
 	protected static void writePNG(String path, JFreeChart chart, int width, int height) {
