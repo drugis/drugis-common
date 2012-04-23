@@ -18,4 +18,5 @@ class LongComputation implements IterativeComputation {
 	public void finish() {}
 	public int getIteration() { return d_step; }
 	public int getTotalIterations() { return d_max; }
+	public void reset() {}
 }

@@ -14,10 +14,12 @@ public class TaskEvent {
 		TASK_STARTED,
 		TASK_FINISHED,
 		TASK_PROGRESS,
+		TASK_RESTARTED,
 		PHASE_STARTED,
 		PHASE_FINISHED,
+		PHASE_RESTARTED,
 		TASK_ABORTED,
-		TASK_FAILED
+		TASK_FAILED,
 	}
 
 	protected TaskEvent(Task source, EventType type) {

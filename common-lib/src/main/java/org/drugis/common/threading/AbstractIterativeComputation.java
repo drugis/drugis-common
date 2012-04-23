@@ -28,5 +28,9 @@ public abstract class AbstractIterativeComputation implements IterativeComputati
 		++d_iteration;
 	}
 	
+	public void reset() { 
+		d_iteration = 0;
+	}
+	
 	public abstract void doStep();
 }
