@@ -9,7 +9,7 @@ import javax.swing.SwingUtilities;
 @SuppressWarnings("serial")
 public class TextProgressBar extends JProgressBar {
 	public TextProgressBar(TextProgressModel model) {
-		setIndeterminate(!model.getDeterminate());
+//		setIndeterminate(!model.getDeterminate());
 		setString(model.getText());
 		setStringPainted(true);
 		if(model.getDeterminate()) {

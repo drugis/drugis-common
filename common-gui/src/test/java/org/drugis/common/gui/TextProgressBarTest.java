@@ -51,14 +51,14 @@ public class TextProgressBarTest {
 	}
 	
 	@Test
-	public void testInitialValuesIndeterminate() {
+	public void testInitialValuesNotIndeterminate() {
 		final String text = "Duurt";
 		
 		TextProgressModel model = new TestProgressModel(text);
 		
 		TextProgressBar bar = new TextProgressBar(model);
 		assertEquals(text, bar.getString());
-		assertEquals(true, bar.isIndeterminate());
+		assertEquals(false, bar.isIndeterminate());
 	}
 	
 	@Test
