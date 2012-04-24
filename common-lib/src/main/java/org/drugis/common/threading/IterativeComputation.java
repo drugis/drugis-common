@@ -25,9 +25,4 @@ public interface IterativeComputation {
 	 * Defines the desired number of iterations.
 	 */
 	public int getTotalIterations();
-	
-	/**
-	 * Resets the internal iteration counter to 0
-	 */
-	public void reset();
 }

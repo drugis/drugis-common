@@ -38,8 +38,4 @@ class IterativeSuspendable extends AbstractSuspendable {
 	public void setReportingInterval(final int interval) {
 		d_interval  = interval;
 	}
-	
-	public void reset() { 
-		d_computation.reset();
-	}
 }
