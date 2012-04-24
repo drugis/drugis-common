@@ -1,7 +1,7 @@
 package org.drugis.common.threading;
 
 public abstract class AbstractExtendableIterativeComputation extends AbstractIterativeComputation implements IterativeComputation, IterativeExtendableComputation {
-
+	
 	public AbstractExtendableIterativeComputation(int totalIterations) {
 		super(totalIterations);
 	}
@@ -11,6 +11,6 @@ public abstract class AbstractExtendableIterativeComputation extends AbstractIte
 	}
 	
 	public void setTotalIterations(int it) {
-		d_totalIterations = it;
-	}	
+		d_totalIterations = it;		
+	}
 }
