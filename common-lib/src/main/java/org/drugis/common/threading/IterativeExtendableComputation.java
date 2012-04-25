@@ -13,4 +13,10 @@ public interface IterativeExtendableComputation extends IterativeComputation {
 	 */
 	public void setTotalIterations(int it);
 
+	/**
+	 * 
+	 * @return returns the total amount of iterations since last extension or rest
+	 */
+	public int getTotalProgressIteration();
+
 }

@@ -22,7 +22,12 @@ public interface IterativeComputation {
 	 */
 	public int getIteration();
 	/**
-	 * Defines the desired number of iterations.
+	 * Return the desired number of iterations.
 	 */
 	public int getTotalIterations();
+	
+	/**
+	 * Returns the iteration to be used for the progress events 
+	 */
+	public int getProgressIteration();	
 }

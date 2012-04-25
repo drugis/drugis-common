@@ -92,6 +92,7 @@ public class ActivityTaskProgressGraph extends JGraph {
 		public void finish() {}
 		public int getIteration() { return d_step; }
 		public int getTotalIterations() { return d_max; }
+		public int getProgressIteration() {return d_step; }
 	}
 
 	private static ActivityTask createTask() {
