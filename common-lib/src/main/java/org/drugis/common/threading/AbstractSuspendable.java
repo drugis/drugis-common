@@ -45,12 +45,12 @@ public abstract class AbstractSuspendable implements Suspendable  {
 	}
 	
 	protected void waitIfSuspended() throws AbortedException {
-		while(isSuspended()) {
 			synchronized(this) {
 				try {
-					wait();
+					while(isSuspended()) {
+						wait();
+					}
 				} catch (InterruptedException e) {
-				}
 			}
 		}
 
