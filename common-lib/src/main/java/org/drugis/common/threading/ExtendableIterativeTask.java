@@ -3,12 +3,12 @@ package org.drugis.common.threading;
 
 public class ExtendableIterativeTask extends IterativeTask {
 	private final String d_str;
-	private final IterativeExtendableComputation d_computation; 
+	private final ExtendableIterativeComputation d_computation; 
 	
 	public ExtendableIterativeTask(IterativeComputation computation, String str) {
 		super(computation, str);
-		if(computation instanceof IterativeExtendableComputation) { 
-			d_computation = (IterativeExtendableComputation) computation;
+		if(computation instanceof ExtendableIterativeComputation) { 
+			d_computation = (ExtendableIterativeComputation) computation;
 		} else {
 			throw new IllegalArgumentException("Computation not an instanceof IterativeExtendableComputation");
 		}

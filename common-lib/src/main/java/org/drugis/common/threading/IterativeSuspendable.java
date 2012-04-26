@@ -15,7 +15,7 @@ class IterativeSuspendable extends AbstractSuspendable {
 		d_computation.initialize();
 		waitIfSuspended();
 		while (d_computation.getIteration() < d_computation.getTotalIterations()) {				
-			if (d_interval > 0 && d_computation.getProgressIteration() % d_interval == 0) {
+			if (d_interval > 0 && d_computation.getIteration() % d_interval == 0) {
 				fireProgress();
 			}
 			d_computation.step();
@@ -28,14 +28,7 @@ class IterativeSuspendable extends AbstractSuspendable {
 	}
 	
 	private void fireProgress() {
-		int total;
-		if (d_computation instanceof IterativeExtendableComputation) {
-			total = d_computation.getTotalIterations() - ((IterativeExtendableComputation) d_computation).getTotalProgressIteration();
-		}
-		else {
-			total = d_computation.getTotalIterations();
-		}
-		d_mgr.fireTaskProgress(d_computation.getProgressIteration(), total);
+		d_mgr.fireTaskProgress(d_computation.getIteration(), d_computation.getTotalIterations());
 	}
 
 	public void setListenerManager(final ListenerManager mgr) {
