@@ -7,7 +7,7 @@ public class SimpleSuspendableTask implements SimpleTask {
 	protected final Suspendable d_suspendable;
 
 	private boolean d_started = false;
-	private boolean d_finished = false;
+	protected boolean d_finished = false;
 	private Throwable d_failure;
 	private String d_str;
 

@@ -92,7 +92,7 @@ public class ThreadHandler extends AbstractObservable {
 	Map<SimpleTask, SuspendableThreadWrapper> d_wrappers = new HashMap<SimpleTask, SuspendableThreadWrapper>();
 	
 	
-	private static ThreadHandler d_singleton;
+	private volatile static ThreadHandler d_singleton;
 	
 	private ThreadHandler() {
 		d_numCores = Runtime.getRuntime().availableProcessors();

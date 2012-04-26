@@ -12,6 +12,7 @@ import org.drugis.common.threading.event.ListenerManager;
 import org.drugis.common.threading.event.TaskEvent;
 import org.drugis.common.threading.event.TaskFailedEvent;
 import org.drugis.common.threading.event.TaskFinishedEvent;
+import org.drugis.common.threading.event.TaskRestartedEvent;
 import org.drugis.common.threading.event.TaskStartedEvent;
 
 public class ActivityTask implements CompositeTask {
@@ -29,7 +30,9 @@ public class ActivityTask implements CompositeTask {
 				}
 			} else if (event instanceof TaskFailedEvent) {
 				d_mgr.fireTaskFailed(((TaskFailedEvent) event).getCause());
-			} 
+			} else if (event instanceof TaskRestartedEvent) {
+				d_mgr.firePhaseRestarted(event.getSource());
+			}
 		}
 	}
 
