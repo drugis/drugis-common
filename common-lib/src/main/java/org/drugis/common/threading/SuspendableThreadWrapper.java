@@ -24,8 +24,6 @@ package org.drugis.common.threading;
 
 import java.lang.Thread.State;
 
-import org.drugis.common.threading.Suspendable;
-
 public class SuspendableThreadWrapper {
 	private Thread d_thread;
 	private final Suspendable d_runnable;

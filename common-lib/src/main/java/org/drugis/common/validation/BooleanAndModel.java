@@ -19,13 +19,13 @@
 
 package org.drugis.common.validation;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.List;
 
-import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.binding.value.AbstractValueModel;
+import com.jgoodies.binding.value.ValueModel;
 
 /**
  * Listens to two nested ValueModels, and converts to true iff both are true. Converts to null if either one is null, or not a Boolean.

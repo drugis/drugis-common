@@ -19,15 +19,16 @@
 
 package org.drugis.common.validation;
 
-import com.jgoodies.binding.value.ValueHolder;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.beans.PropertyChangeListener;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.drugis.common.JUnitUtil;
-import org.drugis.common.validation.StringNotEmptyModel;
+import org.junit.Test;
 
-import static org.easymock.EasyMock.*;
+import com.jgoodies.binding.value.ValueHolder;
 
 public class StringNotEmptyModelTest {
 	@Test

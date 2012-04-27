@@ -1,7 +1,7 @@
 package org.drugis.common.threading.event;
 
 import static org.drugis.common.JUnitUtil.assertNotEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.drugis.common.threading.Task;
 import org.junit.Before;

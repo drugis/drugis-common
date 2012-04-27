@@ -35,8 +35,6 @@ import java.util.Collections;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.drugis.common.beans.FilteredObservableList;
-import org.drugis.common.beans.SortedSetModel;
 import org.drugis.common.beans.FilteredObservableList.Filter;
 import org.drugis.common.event.ListDataEventMatcher;
 import org.junit.Before;
