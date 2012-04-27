@@ -1,7 +1,8 @@
 package org.drugis.common.stat;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class StatisticsTest {
 	private static final double EPSILON = 0.000001;
