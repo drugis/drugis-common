@@ -24,7 +24,9 @@
 
 package org.drugis.common.beans;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,7 +38,6 @@ import java.util.TreeSet;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.drugis.common.beans.SortedSetModel;
 import org.drugis.common.event.ListDataEventMatcher;
 import org.junit.Before;
 import org.junit.Test;

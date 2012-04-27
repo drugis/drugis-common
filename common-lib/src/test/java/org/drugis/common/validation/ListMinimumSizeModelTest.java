@@ -19,16 +19,17 @@
 
 package org.drugis.common.validation;
 
-import com.jgoodies.binding.list.ArrayListModel;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.drugis.common.JUnitUtil;
-import org.drugis.common.validation.ListMinimumSizeModel;
+import org.junit.Test;
 
-import static org.easymock.EasyMock.*;
+import com.jgoodies.binding.list.ArrayListModel;
 
 public class ListMinimumSizeModelTest {
 	@Test

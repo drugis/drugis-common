@@ -1,8 +1,7 @@
 package org.drugis.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.drugis.common.StudentTTable;
 import org.junit.Test;
 
 public class StudentTTableTest {

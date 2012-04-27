@@ -19,14 +19,14 @@
 
 package org.drugis.common.validation;
 
-import java.util.List;
-import java.beans.PropertyDescriptor;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
-import com.jgoodies.binding.BindingUtils;
-import com.jgoodies.binding.beans.Observable;
-import com.jgoodies.binding.beans.BeanUtils;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyDescriptor;
+import java.util.List;
 
+import com.jgoodies.binding.BindingUtils;
+import com.jgoodies.binding.beans.BeanUtils;
+import com.jgoodies.binding.beans.Observable;
 import com.jgoodies.binding.value.AbstractValueModel;
 
 /**

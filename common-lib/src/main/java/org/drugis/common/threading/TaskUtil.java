@@ -22,8 +22,6 @@
 
 package org.drugis.common.threading;
 
-import org.drugis.common.threading.Task;
-import org.drugis.common.threading.ThreadHandler;
 import org.drugis.common.threading.activity.ActivityModel;
 import org.drugis.common.threading.activity.ActivityTask;
 

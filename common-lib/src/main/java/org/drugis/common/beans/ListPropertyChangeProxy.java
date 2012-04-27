@@ -19,15 +19,15 @@
 
 package org.drugis.common.beans;
 
-import com.jgoodies.binding.list.ObservableList;
-import com.jgoodies.binding.beans.Observable;
-
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListDataEvent;
-
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
+import com.jgoodies.binding.beans.Observable;
+import com.jgoodies.binding.list.ObservableList;
 
 /**
  * Ensures that a PropertyChangeListener is attached to each of the Observables in an ObservableList.

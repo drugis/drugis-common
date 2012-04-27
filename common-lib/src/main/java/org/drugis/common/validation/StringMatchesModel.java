@@ -19,13 +19,13 @@
 
 package org.drugis.common.validation;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.binding.value.AbstractValueModel;
+import com.jgoodies.binding.value.ValueModel;
 
 /**
  * Listens to a nested ValueModel, and converts it to true iff nested matches the given pattern.
