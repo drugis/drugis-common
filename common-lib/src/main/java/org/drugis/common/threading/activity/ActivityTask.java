@@ -8,10 +8,12 @@ import org.drugis.common.threading.CompositeTask;
 import org.drugis.common.threading.SimpleTask;
 import org.drugis.common.threading.Task;
 import org.drugis.common.threading.TaskListener;
+import org.drugis.common.threading.WaitingTask;
 import org.drugis.common.threading.event.ListenerManager;
 import org.drugis.common.threading.event.TaskEvent;
 import org.drugis.common.threading.event.TaskFailedEvent;
 import org.drugis.common.threading.event.TaskFinishedEvent;
+import org.drugis.common.threading.event.TaskRestartedEvent;
 import org.drugis.common.threading.event.TaskStartedEvent;
 
 public class ActivityTask implements CompositeTask {
@@ -29,7 +31,9 @@ public class ActivityTask implements CompositeTask {
 				}
 			} else if (event instanceof TaskFailedEvent) {
 				d_mgr.fireTaskFailed(((TaskFailedEvent) event).getCause());
-			} 
+			} else if (event instanceof TaskRestartedEvent) {
+				d_mgr.firePhaseRestarted(event.getSource());
+			}
 		}
 	}
 
@@ -94,7 +98,15 @@ public class ActivityTask implements CompositeTask {
 		}
 		ArrayList<SimpleTask> list = new ArrayList<SimpleTask>();
 		for (Task t : d_model.getNextStates()) {
-			if (t instanceof SimpleTask) {
+			if (t instanceof WaitingTask && !t.isFinished()) {
+				WaitingTask wt = (WaitingTask) t;
+				if (!wt.isStarted()) {
+					wt.onStartWaiting();
+				}
+				if (!wt.isWaiting()) {
+					wt.onEndWaiting();
+				}
+			} else if (t instanceof SimpleTask) {
 				list.add((SimpleTask)t);
 			} else {
 				throw new RuntimeException("Unhandled Task type " + t.getClass());

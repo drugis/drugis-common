@@ -24,7 +24,6 @@ package org.drugis.common.beans;
 
 import java.beans.PropertyChangeListener;
 
-
 import com.jgoodies.binding.beans.Observable;
 
 public abstract class AbstractObservable implements Observable {

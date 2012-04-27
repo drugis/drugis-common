@@ -1,8 +1,8 @@
 package org.drugis.common.threading;
 
 public abstract class AbstractIterativeComputation implements IterativeComputation {
-	private final int d_totalIterations;
-	private int d_iteration;
+	protected int d_totalIterations;
+	protected int d_iteration;
 
 	public AbstractIterativeComputation(int totalIterations) {
 		d_totalIterations = totalIterations;
@@ -27,6 +27,7 @@ public abstract class AbstractIterativeComputation implements IterativeComputati
 		doStep();
 		++d_iteration;
 	}
-	
+
 	public abstract void doStep();
+	
 }

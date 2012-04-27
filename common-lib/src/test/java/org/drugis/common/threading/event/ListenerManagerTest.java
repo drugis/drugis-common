@@ -1,10 +1,13 @@
 package org.drugis.common.threading.event;
 
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import org.drugis.common.threading.Task;
 import org.drugis.common.threading.TaskListener;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
 
 public class ListenerManagerTest {
 	private Task d_task;

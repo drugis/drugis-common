@@ -20,8 +20,8 @@
 package org.drugis.common.validation;
 
 import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import com.jgoodies.binding.value.AbstractValueModel;
 

@@ -43,7 +43,11 @@ public class ListenerManager {
 	public void fireTaskAborted() {
 		fireEvent(new TaskAbortedEvent(d_source));
 	}
-
+	
+	public void fireTaskRestarted() {
+		fireEvent(new TaskRestartedEvent(d_source));
+	}	
+	
 	public void fireTaskFailed(Throwable cause) {
 		fireEvent(new TaskFailedEvent(d_source, cause));
 	}
@@ -58,5 +62,9 @@ public class ListenerManager {
 
 	public void firePhaseFinished(Task phase) {
 		fireEvent(new PhaseFinishedEvent(d_source, phase));
-	}	
+	}
+
+	public void firePhaseRestarted(Task phase) {
+		fireEvent(new PhaseRestartedEvent(d_source, phase));	
+	}
 }

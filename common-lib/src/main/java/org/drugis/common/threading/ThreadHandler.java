@@ -37,10 +37,12 @@ import org.drugis.common.threading.event.TaskEvent.EventType;
 public class ThreadHandler extends AbstractObservable {
 	
 	public static final String PROPERTY_RUNNING_THREADS = "runningThreads";
-	public static final String PROPERTY_QUEUED_TASKS = "queuedTasks"; // FIXME: rename to queuedTasks
+	public static final String PROPERTY_QUEUED_TASKS = "queuedTasks";
 	public static final String PROPERTY_FAILED_TASK = "failedTask";
 	
-	/* Separate thread to start/suspend threads */
+	/**
+	 * Thread to start/suspend threads, limiting the number of running tasks to the number of cores available.
+	 */
 	private class RunQueueCleaner implements Runnable {
 		public void run(){
 			while(true) {
@@ -48,7 +50,10 @@ public class ThreadHandler extends AbstractObservable {
 					List<SuspendableThreadWrapper> toRun = getThreadsToRun(d_numCores);
 					List<SuspendableThreadWrapper> toStop = new LinkedList<SuspendableThreadWrapper>(d_runningTasks);
 					toStop.removeAll(toRun);
-					toRun.removeAll(d_runningTasks);
+					toRun.removeAll(d_runningTasks); // toRun now contains the tasks to be started
+					
+					// Stop tasks that shouldn't be running, if they are Suspendable.
+					// Otherwise they will remain running.
 					for (SuspendableThreadWrapper t : toStop) {
 						if (!t.isTerminated()) {
 							if (t.isAborted() || t.suspend()) {
@@ -58,12 +63,19 @@ public class ThreadHandler extends AbstractObservable {
 							d_runningTasks.remove(t);
 						}
 					}
-					int availableSlots = d_numCores - d_runningTasks.size(); 
+					
+					// Fill up the runningTasks with additional tasks (at most d_numCores tasks).
+					int availableSlots = d_numCores - d_runningTasks.size();
 					for (int i = 0; i < availableSlots && i < toRun.size(); ++i) {
 						SuspendableThreadWrapper t = toRun.get(i);
-						t.start();
 						d_runningTasks.add(t);
 					}
+
+					// Ensure all tasks in the runningTasks list are started (also restarts previously suspended ones).
+					for (SuspendableThreadWrapper t : d_runningTasks) {
+						t.start();
+					}
+					
 					firePropertyChange(PROPERTY_QUEUED_TASKS, null, d_scheduledTasks.size());
 					firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 				}
@@ -92,7 +104,7 @@ public class ThreadHandler extends AbstractObservable {
 	Map<SimpleTask, SuspendableThreadWrapper> d_wrappers = new HashMap<SimpleTask, SuspendableThreadWrapper>();
 	
 	
-	private static ThreadHandler d_singleton;
+	private static volatile ThreadHandler d_singleton;
 	
 	private ThreadHandler() {
 		d_numCores = Runtime.getRuntime().availableProcessors();
@@ -102,9 +114,12 @@ public class ThreadHandler extends AbstractObservable {
 		d_cleaner.start();
 	}
 	
+	/**
+	 * Get at most n tasks to be run, based on the queue of scheduled tasks.
+	 */
 	public List<SuspendableThreadWrapper> getThreadsToRun(int n) {
 		List<SimpleTask> toRun = new ArrayList<SimpleTask>(n);
-		for (int i = 0; toRun.size() < n && i < d_scheduledTasks.size(); ) {
+		for (int i = 0; i < d_scheduledTasks.size() && toRun.size() < n; ) {
 			Task task = d_scheduledTasks.get(i);
 			if (task.isFinished() || task.isFailed() || task.isAborted()) {
 				d_scheduledTasks.remove(i);
@@ -140,8 +155,9 @@ public class ThreadHandler extends AbstractObservable {
 	}
 
 	public static ThreadHandler getInstance() {
-		if (d_singleton == null)
+		if (d_singleton == null) {
 			d_singleton = new ThreadHandler();
+		}
 		return d_singleton;
 	}
 	
@@ -158,7 +174,7 @@ public class ThreadHandler extends AbstractObservable {
 	}
 	
 	/**
-	 * Schedule tasks for execution. May also be used to re-prioritize already scheduled tasks (the new ones get highest prio).
+	 * Schedule tasks for execution. May also be used to re-prioritize already scheduled tasks (the new ones get highest priority).
 	 * @param newTasks tasks to schedule.
 	 */
 	public synchronized void scheduleTasks(Collection<? extends Task> newTasks) {
@@ -173,12 +189,15 @@ public class ThreadHandler extends AbstractObservable {
 		}
 	}
 	
-	private LinkedList<SuspendableThreadWrapper> getWrappers(Collection<SimpleTask> newRunnables) {
+	/**
+	 * Wrap the given runnables in a thread, keeping track of which runnables have been wrapped.
+	 */
+	private LinkedList<SuspendableThreadWrapper> getWrappers(Collection<SimpleTask> runnables) {
 		vacuumWrappers();
 		
 		/* Check whether Runnable already has a wrapper, otherwise create it */
 		LinkedList<SuspendableThreadWrapper> newList = new LinkedList<SuspendableThreadWrapper>();
-		for (SimpleTask r : newRunnables) {
+		for (SimpleTask r : runnables) {
 			SuspendableThreadWrapper w = d_wrappers.get(r);
 			if (w == null) {
 				w = new SuspendableThreadWrapper(r);
@@ -191,6 +210,9 @@ public class ThreadHandler extends AbstractObservable {
 		return newList;
 	}
 	
+	/**
+	 * Remove unused thread wrappers.
+	 */
 	private void vacuumWrappers() {
 		List<Task> toRemove = new ArrayList<Task>(d_wrappers.keySet().size());
 		for (Task r : d_wrappers.keySet()) {
@@ -218,6 +240,9 @@ public class ThreadHandler extends AbstractObservable {
 		return Collections.unmodifiableList(d_scheduledTasks);
 	}
 
+	/**
+	 * Abort all scheduled tasks.
+	 */
 	public void clear() {
 		synchronized(d_runningTasks) {
 			terminateTasks(d_wrappers.values());
@@ -228,12 +253,18 @@ public class ThreadHandler extends AbstractObservable {
 		firePropertyChange(PROPERTY_RUNNING_THREADS, null, d_runningTasks.size());
 	}
 
+	/**
+	 * Terminate the given threads.
+	 */
 	private void terminateTasks(Collection<SuspendableThreadWrapper> tasks) {
 		for (SuspendableThreadWrapper thread : tasks) {
 			thread.terminate();
 		}
 	}
 	
+	/**
+	 * Abort the given task.
+	 */
 	public boolean abortTask(Task t) {
 		if (t instanceof SimpleTask) {
 			return abortSimple((SimpleTask) t);

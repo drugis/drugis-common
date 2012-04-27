@@ -1,12 +1,10 @@
 package org.drugis.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-
-import org.drugis.common.CollectionUtil;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -35,7 +35,6 @@ import com.jgoodies.binding.list.ObservableList;
  * In addition, it will fireContentsChanged when certain properties of the contained Observables change, or all properties if none are specified.
  */
 public class ContentAwareListModel<T extends Observable> extends AbstractObservableList<T> {
-	private static final long serialVersionUID = 8722229007151818730L;
 	
 	private ObservableList<T> d_nested;
 	@SuppressWarnings("unused") private ListPropertyChangeProxy<T> d_proxy;

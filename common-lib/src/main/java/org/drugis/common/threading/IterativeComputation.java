@@ -4,6 +4,7 @@ package org.drugis.common.threading;
  * Defines an iterative computation. 
  */
 public interface IterativeComputation {
+	
 	/**
 	 * Perform initialization.
 	 */
@@ -21,7 +22,7 @@ public interface IterativeComputation {
 	 */
 	public int getIteration();
 	/**
-	 * Defines the desired number of iterations.
+	 * Return the desired number of iterations.
 	 */
 	public int getTotalIterations();
 }
