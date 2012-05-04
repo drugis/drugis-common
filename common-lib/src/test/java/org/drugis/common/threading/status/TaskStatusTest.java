@@ -54,9 +54,7 @@ public class TaskStatusTest {
 		
 		task.finish();
 		assertFalse((Boolean)taskStartable.getValue());
-		
-		task.abort();
-		assertTrue((Boolean)taskStartable.getValue());
+
 	}
 
 	@Test
