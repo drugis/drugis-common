@@ -19,14 +19,17 @@ public class TaskStatusTest {
 
 	
 	@Test
-	public void testTaskFinishedModel() {
+	public void testTaskTerminatedModel() {
 		MockTask task = new MockTask();
-		ValueModel taskFinished = new TaskFinishedModel(task);
+		ValueModel taskTerminated = new TaskTerminatedModel(task);
 		
-		assertFalse((Boolean)taskFinished.getValue());
+		assertFalse((Boolean)taskTerminated.getValue());
 		
 		task.finish();
-		assertTrue((Boolean)taskFinished.getValue());
+		assertTrue((Boolean)taskTerminated.getValue());
+		
+		task.abort();
+		assertTrue((Boolean)taskTerminated.getValue());
 
 	}
 	
@@ -40,7 +43,7 @@ public class TaskStatusTest {
 	@Test(expected = IllegalAccessError.class)
 	public void testTaskFinishedSetValue() throws IllegalAccessError {
 		MockTask task = new MockTask();
-		ValueModel taskFinished = new TaskFinishedModel(task);
+		ValueModel taskFinished = new TaskTerminatedModel(task);
 		taskFinished.setValue(null);
 	}
 

@@ -31,14 +31,15 @@ import org.drugis.common.threading.event.TaskEvent;
 import com.jgoodies.binding.value.AbstractValueModel;
 
 /**
- * Listens to a task and returns true if the task is finished and not aborted.
+ * Listens to a task and returns true if the task is finished or aborted.
+ * Useful for example for making buttons active after a task is finished.
  */
 @SuppressWarnings("serial")
-public class TaskFinishedModel extends AbstractValueModel implements TaskListener {
+public class TaskTerminatedModel extends AbstractValueModel implements TaskListener {
 	private boolean d_val;
 
-	public TaskFinishedModel(Task task) {
-		d_val = task.isFinished() && !task.isAborted();
+	public TaskTerminatedModel(Task task) {
+		d_val = task.isFinished() || task.isAborted();
 		task.addTaskListener(this);
 	}
 
@@ -54,7 +55,7 @@ public class TaskFinishedModel extends AbstractValueModel implements TaskListene
 	public void taskEvent(TaskEvent event) {
 		boolean oldval = d_val;
 		Task t = event.getSource();
-		d_val = t.isFinished() && !t.isAborted();
+		d_val = t.isFinished() || t.isAborted();
 		fireValueChange(oldval, d_val);
 	}
 }
