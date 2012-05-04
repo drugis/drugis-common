@@ -26,7 +26,7 @@ import com.jgoodies.binding.value.AbstractValueModel;
 import com.jgoodies.binding.value.ValueModel;
 
 /**
- * Listens to a ValueModel, and converts to true if false and false to true. Converts to null if either one is null, or not a Boolean.
+ * Listens to a ValueModel, and converts to true if false and false to true. Remains null if already null, or not a Boolean.
  */
 public class BooleanNotModel extends AbstractValueModel {
 	private static final long serialVersionUID = 8591942709442108053L;
@@ -62,11 +62,8 @@ public class BooleanNotModel extends AbstractValueModel {
 	private Boolean calc() {
 		if (!isBoolean(d_model)) {
 			return null;
-		} else if ((Boolean)d_model.getValue()) {
-			return false;
-		} else { 
-			return true;
 		}
+		return !((Boolean)d_model.getValue());
 	}
 }
 

@@ -30,12 +30,16 @@ import org.drugis.common.threading.event.TaskEvent;
 
 import com.jgoodies.binding.value.AbstractValueModel;
 
+/** 
+ * Listens to a Tasks and returns true if the Task is in a startable state. 
+ * In this case if it is not finished and not already started
+ */
 @SuppressWarnings("serial")
 public class TaskStartableModel extends AbstractValueModel implements TaskListener {
 	private boolean d_val;
 
 	public TaskStartableModel(Task task) {
-		d_val = (!task.isFinished() && !task.isStarted()) || task.isAborted();
+		d_val = (!task.isFinished() && !task.isStarted());
 		task.addTaskListener(this);
 	}
 
@@ -51,7 +55,7 @@ public class TaskStartableModel extends AbstractValueModel implements TaskListen
 	public void taskEvent(TaskEvent event) {
 		boolean oldval = d_val;
 		Task t = event.getSource();
-		d_val = (!t.isFinished() && !t.isStarted()) || t.isAborted();
+		d_val = (!t.isFinished() && !t.isStarted());
 		fireValueChange(oldval, d_val);
 	}
 }

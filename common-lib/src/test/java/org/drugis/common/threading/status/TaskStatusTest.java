@@ -27,20 +27,23 @@ public class TaskStatusTest {
 		
 		task.finish();
 		assertTrue((Boolean)taskFinished.getValue());
-		
-		task.abort();
-		assertTrue((Boolean)taskFinished.getValue());
+
 	}
 	
 	@Test(expected = IllegalAccessError.class)
-	public void testSetValue() throws IllegalAccessError {
+	public void testTaskStartableSetValue() throws IllegalAccessError {
 		MockTask task = new MockTask();
-		ValueModel taskFinished = new TaskFinishedModel(task);
 		ValueModel taskStartable = new TaskStartableModel(task);
-
-		taskFinished.setValue(null);
 		taskStartable.setValue(null);
 	}
+	
+	@Test(expected = IllegalAccessError.class)
+	public void testTaskFinishedSetValue() throws IllegalAccessError {
+		MockTask task = new MockTask();
+		ValueModel taskFinished = new TaskFinishedModel(task);
+		taskFinished.setValue(null);
+	}
+
 
 	@Test
 	public void testTaskStartable() {

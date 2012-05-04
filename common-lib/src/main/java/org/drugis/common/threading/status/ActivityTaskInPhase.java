@@ -32,6 +32,10 @@ import org.drugis.common.threading.event.TaskEvent;
 
 import com.jgoodies.binding.value.AbstractValueModel;
 
+/**
+ * Listens to a Task in and ActivityTask and returns true if the current task is the one given
+ * Usually constructed with a String referring to the toString (name) of the task to be checked 
+ */
 @SuppressWarnings("serial")
 public class ActivityTaskInPhase extends AbstractValueModel implements TaskListener {
 	private boolean d_val;
