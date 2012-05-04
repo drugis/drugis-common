@@ -9,6 +9,8 @@ public class MockTask implements SimpleTask {
 	private boolean d_finished = false;
 	private Throwable d_failure = null;
 	private boolean d_aborted = false;
+	private String d_name = "";
+	
 	ListenerManager d_mgr = new ListenerManager(this);
 
 	public void addTaskListener(TaskListener l) {
@@ -64,6 +66,14 @@ public class MockTask implements SimpleTask {
 		d_mgr.fireTaskProgress(iteration, max);
 	}
 
+	public void setName(String name) { 
+		d_name = name;
+	}
+	
+	public String toString() { 
+		return d_name;
+	}
+	
 	public boolean isSuspended() {
 		// TODO Auto-generated method stub
 		return false;
@@ -80,7 +90,6 @@ public class MockTask implements SimpleTask {
 	}
 
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 }

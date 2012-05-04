@@ -21,23 +21,20 @@ package org.drugis.common.validation;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
-import java.util.List;
 
 import com.jgoodies.binding.value.AbstractValueModel;
 import com.jgoodies.binding.value.ValueModel;
 
 /**
- * Listens to nested ValueModels, and converts to true iff all are true.
- * Converts to null if any one is null, or not a Boolean.
+ * Listens to a ValueModel, and converts to true if false and false to true. Remains null if already null, or not a Boolean.
  */
-public class BooleanAndModel extends AbstractValueModel {
+public class BooleanNotModel extends AbstractValueModel {
 	private static final long serialVersionUID = 8591942709442108053L;
-	private List<ValueModel> d_models;
+	private ValueModel d_model;
 	private Boolean d_val;
 	
-	public BooleanAndModel(List<ValueModel> models) {
-		d_models = models;
+	public BooleanNotModel(ValueModel model) {
+		d_model = model;
 		PropertyChangeListener listener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				Object oldVal = d_val;
@@ -45,14 +42,9 @@ public class BooleanAndModel extends AbstractValueModel {
 				fireValueChange(oldVal, d_val);
 			}
 		};
-		for (ValueModel model : d_models) {
-			model.addValueChangeListener(listener);
-		}
-		d_val = calc();
-	}
+		model.addValueChangeListener(listener);
 
-	public BooleanAndModel(ValueModel bool1, ValueModel bool2) {
-		this(Arrays.asList(bool1, bool2));
+		d_val = calc();
 	}
 
 	public Boolean getValue() {
@@ -68,14 +60,10 @@ public class BooleanAndModel extends AbstractValueModel {
 	}
 
 	private Boolean calc() {
-		for (ValueModel model : d_models) {
-			if (!isBoolean(model)) {
-				return null;
-			} else if (!(Boolean)model.getValue()) {
-				return false;
-			}
+		if (!isBoolean(d_model)) {
+			return null;
 		}
-		return true;
+		return !((Boolean)d_model.getValue());
 	}
 }
 
