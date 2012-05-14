@@ -20,24 +20,34 @@
 package org.drugis.common.validation;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.jgoodies.binding.value.ValueModel;
 
 /**
- * Listens to a ValueModel, and converts to true if false and false to true. Remains null if already null, or not a Boolean.
+ * Listens to nested ValueModels, and converts to true iff one is true. Converts to null if either one is null, or not a Boolean.
  */
-public class BooleanNotModel extends AbstractBooleanModel {
+public class BooleanOrModel extends AbstractBooleanModel {
 	private static final long serialVersionUID = 8591942709442108053L;
 	
-	public BooleanNotModel(ValueModel model) {
-		super(Arrays.asList(model));
+	public BooleanOrModel(List<ValueModel> models) {
+		super(models);
 	}
 
+	public BooleanOrModel(ValueModel bool1, ValueModel bool2) {
+		this(Arrays.asList(bool1, bool2));
+	}
+
+
 	protected Boolean calc() {
-		if (!isBoolean(d_models.get(0))) {
-			return null;
+		for (ValueModel model : d_models) {
+			if (!isBoolean(model)) {
+				return null;
+			} else if ((Boolean)model.getValue()) {
+				return true;
+			}
 		}
-		return !((Boolean)d_models.get(0).getValue());
+		return false;
 	}
 }
 

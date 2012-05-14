@@ -19,54 +19,26 @@
 
 package org.drugis.common.validation;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.List;
 
-import com.jgoodies.binding.value.AbstractValueModel;
 import com.jgoodies.binding.value.ValueModel;
 
 /**
  * Listens to nested ValueModels, and converts to true iff both are true. Converts to null if either one is null, or not a Boolean.
  */
-public class BooleanAndModel extends AbstractValueModel {
+public class BooleanAndModel extends AbstractBooleanModel {
 	private static final long serialVersionUID = 8591942709442108053L;
-	private List<ValueModel> d_models;
-	private Boolean d_val;
 	
 	public BooleanAndModel(List<ValueModel> models) {
-		d_models = models;
-		PropertyChangeListener listener = new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				Object oldVal = d_val;
-				d_val = calc();
-				fireValueChange(oldVal, d_val);
-			}
-		};
-		for (ValueModel model : d_models) {
-			model.addValueChangeListener(listener);
-		}
-		d_val = calc();
+		super(models);
 	}
 
 	public BooleanAndModel(ValueModel bool1, ValueModel bool2) {
 		this(Arrays.asList(bool1, bool2));
 	}
 
-	public Boolean getValue() {
-		return d_val;
-	}
-
-	public void setValue(Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	private boolean isBoolean(ValueModel model) {
-		return model.getValue() != null && model.getValue() instanceof Boolean;
-	}
-
-	private Boolean calc() {
+	protected Boolean calc() {
 		for (ValueModel model : d_models) {
 			if (!isBoolean(model)) {
 				return null;
