@@ -1,6 +1,5 @@
 package org.drugis.common.stat;
 
-import static org.drugis.common.stat.Statistics.logit;
 
 public class DichotomousDescriptives {
 	public final double d_correction;
@@ -38,7 +37,7 @@ public class DichotomousDescriptives {
 	 * Calculate the log-odds of an event log(a) - log(n - a).
 	 */
 	public double logOdds(int a, int n) {
-		return logit(risk(a, n));
+		return Math.log((a + d_correction) / (n - a + d_correction));
 	}
 
 	/**
