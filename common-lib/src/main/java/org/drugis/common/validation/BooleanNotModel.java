@@ -19,51 +19,25 @@
 
 package org.drugis.common.validation;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 
-import com.jgoodies.binding.value.AbstractValueModel;
 import com.jgoodies.binding.value.ValueModel;
 
 /**
  * Listens to a ValueModel, and converts to true if false and false to true. Remains null if already null, or not a Boolean.
  */
-public class BooleanNotModel extends AbstractValueModel {
+public class BooleanNotModel extends AbstractBooleanModel {
 	private static final long serialVersionUID = 8591942709442108053L;
-	private ValueModel d_model;
-	private Boolean d_val;
 	
 	public BooleanNotModel(ValueModel model) {
-		d_model = model;
-		PropertyChangeListener listener = new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				Object oldVal = d_val;
-				d_val = calc();
-				fireValueChange(oldVal, d_val);
-			}
-		};
-		model.addValueChangeListener(listener);
-
-		d_val = calc();
+		super(Arrays.asList(model));
 	}
 
-	public Boolean getValue() {
-		return d_val;
-	}
-
-	public void setValue(Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	private boolean isBoolean(ValueModel model) {
-		return model.getValue() != null && model.getValue() instanceof Boolean;
-	}
-
-	private Boolean calc() {
-		if (!isBoolean(d_model)) {
+	protected Boolean calc() {
+		if (!isBoolean(d_models.get(0))) {
 			return null;
 		}
-		return !((Boolean)d_model.getValue());
+		return !((Boolean)d_models.get(0).getValue());
 	}
 }
 
