@@ -25,29 +25,29 @@ import java.util.List;
 import com.jgoodies.binding.value.ValueModel;
 
 /**
- * Listens to nested ValueModels, and converts to true iff all are true.
- * Converts to null if any one is null, or not a Boolean.
+ * Listens to nested ValueModels, and converts to true iff one is true. Converts to null if either one is null, or not a Boolean.
  */
-public class BooleanAndModel extends AbstractBooleanModel {
+public class BooleanOrModel extends AbstractBooleanModel {
 	private static final long serialVersionUID = 8591942709442108053L;
 	
-	public BooleanAndModel(List<ValueModel> models) {
+	public BooleanOrModel(List<ValueModel> models) {
 		super(models);
 	}
 
-	public BooleanAndModel(ValueModel bool1, ValueModel bool2) {
+	public BooleanOrModel(ValueModel bool1, ValueModel bool2) {
 		this(Arrays.asList(bool1, bool2));
 	}
+
 
 	protected Boolean calc() {
 		for (ValueModel model : d_models) {
 			if (!isBoolean(model)) {
 				return null;
-			} else if (!(Boolean)model.getValue()) {
-				return false;
+			} else if ((Boolean)model.getValue()) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 }
 
