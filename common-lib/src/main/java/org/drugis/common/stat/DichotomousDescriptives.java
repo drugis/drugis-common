@@ -39,6 +39,13 @@ public class DichotomousDescriptives {
 	public double logOdds(int a, int n) {
 		return Math.log((a + d_correction) / (n - a + d_correction));
 	}
+	
+	/**
+	 * Calculate the standard error of the log-odds.
+	 */
+	public double logOddsError(int r, int n) {
+		return Math.sqrt(1.0 / (r + d_correction) + 1.0 / (n - r + d_correction));
+	}
 
 	/**
 	 * Calculate the risk a/n of an event.
