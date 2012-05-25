@@ -22,6 +22,7 @@ public class ExtendableIterativeTask extends IterativeTask {
 	
 	public void extend(int iterations) { 
 		d_finished = false;
+		d_started = false;
 		int oldIterations = d_computation.getTotalIterations();
 		d_computation.setTotalIterations(oldIterations + iterations);
 		d_mgr.fireTaskRestarted();
