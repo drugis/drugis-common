@@ -1,9 +1,9 @@
 package org.drugis.common.validation;
 
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
