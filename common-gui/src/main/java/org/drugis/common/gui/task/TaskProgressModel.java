@@ -172,6 +172,9 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 				} else if (e.getType().equals(TaskEvent.EventType.TASK_ABORTED)) {
 					setDeterminate(true);
 					setProgress(0.0);
+				} else if (e.getType().equals(TaskEvent.EventType.TASK_RESTARTED)) {
+					setDeterminate(true);
+					setProgress(0.0);
 				} else if (e instanceof PhaseEvent) {
 					PhaseEvent evt = (PhaseEvent) e;
 					Task phase = evt.getPhase();

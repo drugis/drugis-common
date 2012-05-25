@@ -79,6 +79,15 @@ public class ActivityModel {
 		return tasks;
 	}
 	
+	public Task getStateByName(String name) { 
+		for (Task t : getStates()) { 		
+			if(name.equals(t.toString())) { 
+				return t;
+			}
+		}
+		return null;
+	}
+	
 	public Set<Transition> getTransitions() {
 		return new HashSet<Transition>(d_transitions.values());
 	}

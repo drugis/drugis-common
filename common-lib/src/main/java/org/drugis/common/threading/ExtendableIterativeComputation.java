@@ -8,8 +8,4 @@ public interface ExtendableIterativeComputation extends IterativeComputation {
 	 */
 	public void setTotalIterations(int it);
 	
-	/**
-	 * @return the amount of iterations this computation has been extendend with
-	 */
-	public int getAmountExtended();
 }
