@@ -58,7 +58,6 @@ public class SimpleSuspendableTask implements SimpleTask {
 			d_mgr.fireTaskFailed(e);
 			return;
 		}
-		
 		d_finished = true;
 		d_mgr.fireTaskFinished();
 	}
