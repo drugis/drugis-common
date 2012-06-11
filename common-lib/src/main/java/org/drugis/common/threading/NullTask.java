@@ -1,7 +1,7 @@
 package org.drugis.common.threading;
 
 public class NullTask extends SimpleSuspendableTask {
-	private String d_str = "NullTask";
+	private String d_str = "";
 
 	public NullTask() {
 		super(new Runnable() { public void run() {} });

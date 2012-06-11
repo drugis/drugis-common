@@ -6,7 +6,7 @@ public class SimpleSuspendableTask implements SimpleTask {
 	protected ListenerManager d_mgr;
 	protected final Suspendable d_suspendable;
 
-	private boolean d_started = false;
+	protected boolean d_started = false;
 	protected boolean d_finished = false;
 	private Throwable d_failure;
 	private String d_str;
@@ -58,7 +58,6 @@ public class SimpleSuspendableTask implements SimpleTask {
 			d_mgr.fireTaskFailed(e);
 			return;
 		}
-		
 		d_finished = true;
 		d_mgr.fireTaskFinished();
 	}

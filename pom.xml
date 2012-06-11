@@ -4,7 +4,7 @@
 
 	<groupId>org.drugis</groupId>
 	<artifactId>common</artifactId>
-	<version>0.5.2-SNAPSHOT</version>
+	<version>0.5.2</version>
 	<packaging>pom</packaging>
 	<name>drugis-common</name>
 
@@ -71,5 +71,6 @@
 		<module>common-test</module>
 		<module>common-lib</module>
 		<module>common-gui</module>
+		<module>common-extra</module>
 	</modules>
 </project>

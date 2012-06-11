@@ -9,7 +9,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +21,6 @@ import org.drugis.common.threading.event.PhaseStartedEvent;
 import org.drugis.common.threading.event.TaskFailedEvent;
 import org.drugis.common.threading.event.TaskFinishedEvent;
 import org.drugis.common.threading.event.TaskStartedEvent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ActivityTaskTest {
@@ -136,12 +134,5 @@ public class ActivityTaskTest {
 		task.addTaskListener(listener);
 		start.fail(ex);
 		verify(listener);
-	}
-	
-	@Test @Ignore
-	public void testHandlesNested() {
-		// FIXME: test for handling of CompositeTask nested into ActivityTask.
-		// This should result in the CompositeTask.getNextTasks() being added. 
-		fail();
 	}
 }
