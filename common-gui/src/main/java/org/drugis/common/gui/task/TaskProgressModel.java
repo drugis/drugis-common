@@ -52,8 +52,11 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 			d_task.removeTaskListener(d_taskListener);
 		}
 		d_task = task;
+		if(task.isFinished()) {
+			setProgress(1.0);
+		}
 		removePhases();
-		setDeterminate(false);
+		setDeterminate(task.isFinished());
 		task.addTaskListener(d_taskListener);
 	}
 	
@@ -170,6 +173,9 @@ public class TaskProgressModel extends AbstractObservable implements TextProgres
 					setDeterminate(true);
 					setProgress(0.0);
 				} else if (e.getType().equals(TaskEvent.EventType.TASK_ABORTED)) {
+					setDeterminate(true);
+					setProgress(0.0);
+				} else if (e.getType().equals(TaskEvent.EventType.TASK_RESTARTED)) {
 					setDeterminate(true);
 					setProgress(0.0);
 				} else if (e instanceof PhaseEvent) {
