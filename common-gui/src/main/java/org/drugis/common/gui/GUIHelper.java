@@ -106,7 +106,7 @@ public class GUIHelper {
 	
 	/**
 	 * @param String to be transformed into human readable format
-	 * @return String which transforms a string into a better readable format
+	 * @return human-readable string
 	 * @see <a href="http://stackoverflow.com/questions/2559759/how-do-i-convert-camelcase-into-human-readable-names-in-java">How do I convert CamelCase into human-readable names in Java</a>
 	 */
 	public static String humanize(String s) {
