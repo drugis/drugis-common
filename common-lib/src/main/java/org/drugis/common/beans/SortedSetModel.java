@@ -26,6 +26,7 @@ package org.drugis.common.beans;
 
 import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -36,14 +37,19 @@ import org.drugis.common.event.ListDataListenerManager;
 import com.jgoodies.binding.list.ObservableList;
 
 public class SortedSetModel<E> extends AbstractList<E> implements ObservableList<E> {
-	private SortedSet<E> d_set = new TreeSet<E>();
-	private ListDataListenerManager d_listenerManager = new ListDataListenerManager(this);
+	private final SortedSet<E> d_set;
+	private final ListDataListenerManager d_listenerManager = new ListDataListenerManager(this);
 
 	public SortedSetModel() {
+		d_set = new TreeSet<E>();
+	}
+	
+	public SortedSetModel(Comparator<? super E> comparator) {
+		d_set = new TreeSet<E>(comparator);
 	}
 
 	public SortedSetModel(Collection<? extends E> c) {
-		d_set.addAll(c);
+		d_set = new TreeSet<E>(c);
 	}
 
 	//// List<E> methods
