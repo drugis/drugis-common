@@ -98,6 +98,33 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	public E get(int index) {
 		return d_inner.get(d_indices.get(index));
 	}
+	
+	@Override
+	public void add(int index, E element) {
+		if(!d_filter.accept(element)) throw new IllegalArgumentException("Cannot add " + element + ", it does not pass the filter of " + this);	
+		if(index < d_indices.size()) { 
+			d_inner.add(d_indices.get(index), element);
+		} else {
+			d_inner.add(d_inner.size(), element);
+		}
+	}
+	
+	@Override
+	public E set(int index, E element) {
+		if(!d_filter.accept(element)) throw new IllegalArgumentException("Cannot add " + element + ", it does not pass the filter.");	
+		return d_inner.set(d_indices.get(index), element);
+	}
+	
+	@Override
+	public E remove(int index) {
+		E elem = d_inner.get(d_indices.get(index));
+		if (elem != null) {
+			d_inner.remove(elem);
+			return elem;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public int size() {
