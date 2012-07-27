@@ -32,11 +32,12 @@ public abstract class OkCancelDialog extends JDialog {
 	private JComponent createPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		
-		d_userPanel = new JPanel(new BorderLayout());
-		panel.add(d_userPanel, BorderLayout.CENTER);
-		
 		d_okButton = createOkButton();
 		d_cancelButton = createCancelButton();
+		
+		d_userPanel = new JPanel(new BorderLayout());
+		panel.add(d_userPanel, BorderLayout.CENTER);
+	
 		ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 		builder.addGlue();
 		builder.addButton(d_okButton);
