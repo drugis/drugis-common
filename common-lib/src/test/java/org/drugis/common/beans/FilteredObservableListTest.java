@@ -28,6 +28,8 @@ import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,22 +71,6 @@ public class FilteredObservableListTest {
 		assertEquals("Jan", d_outer.getElementAt(1));
 		assertEquals(2, d_outer.getSize());
 	}
-	
-	@Test(expected=UnsupportedOperationException.class)
-	public void testAddNotSupported() {
-		d_outer.add("Test");
-	}
-	
-	@Test(expected=UnsupportedOperationException.class)
-	public void testSetNotSupported() {
-		d_outer.set(2, "Test");
-	}
-	
-	@Test(expected=UnsupportedOperationException.class)
-	public void testRemoveNotSupported() {
-		d_outer.remove("Gert");
-	}
-	
 	
 	@Test
 	public void testContentsUpdateAddStart() {
@@ -285,5 +271,58 @@ public class FilteredObservableListTest {
 		list.add("Ac");
 		assertEquals(Arrays.asList("Aa", "Ab", "Ac"), aList);
 		assertEquals(Arrays.asList("Ba", "Bb"), bList);
+	}
+	
+	@Test
+	public void testAddWithIndex() { 
+		String newElem1 = "Piet";
+		
+		d_outer.add(1, newElem1);
+		
+		assertTrue(d_outer.contains(newElem1));
+		assertTrue(d_inner.contains(newElem1));
+		
+		assertEquals(1, d_outer.indexOf(newElem1));
+				
+		String newElem2 = "Truus";
+		
+		d_outer.add(1, newElem2);
+		assertTrue(d_inner.indexOf(newElem2) < d_inner.indexOf(newElem1));
+		
+		int oldSize = d_outer.size();
+		d_outer.add(oldSize, "Erik");
+		assertTrue(d_outer.contains("Erik"));
+		assertEquals(oldSize, d_outer.indexOf("Erik"));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testAddNonAcceptable() { 
+		d_outer.add("Maarten");
+	}
+	
+	@Test 
+	public void testSetElementWithIndex() {
+		int innerIdx = d_inner.indexOf(d_outer.get(1));
+		String newElem = "Frits";
+		d_outer.set(1, newElem);
+		assertEquals(newElem, d_outer.get(1));
+		assertEquals(newElem, d_inner.get(innerIdx));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testSetNonAcceptable() { 
+		d_outer.set(1, "Maarten");
+	}
+	
+	@Test
+	public void testRemoveWithIndex() {
+		String oldElem1 = d_outer.get(0);
+		String oldElem2 = d_outer.get(1);
+
+		String removed = d_outer.remove(0);
+		assertFalse(d_inner.contains(oldElem1));
+		assertFalse(d_outer.contains(oldElem1));
+		assertEquals(oldElem2, d_outer.get(0));
+		assertEquals(oldElem1, removed);
 	}
 }
