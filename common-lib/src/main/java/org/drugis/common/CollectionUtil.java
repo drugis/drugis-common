@@ -1,12 +1,12 @@
 package org.drugis.common;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
 
 public class CollectionUtil {
 
-	public static <E> E getElementAtIndex(SortedSet<E> set, int idx) {
+	public static <E> E getElementAtIndex(Collection<E> set, int idx) {
 		if (idx >= set.size() || idx < 0) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -17,7 +17,7 @@ public class CollectionUtil {
 		return it.next();
 	}
 
-	public static <E> int getIndexOfElement(SortedSet<E> set, Object child) {
+	public static <E> int getIndexOfElement(Collection<E> set, Object child) {
 		int i = 0;
 		for (E e : set) {
 			if (e.equals(child)) {
