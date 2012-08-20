@@ -31,21 +31,19 @@ import java.util.List;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.apache.commons.collections15.Predicate;
+
 import com.jgoodies.binding.list.ObservableList;
 
 /**
  * An ObservableList that provides a filtered view on another ObservableList.
  */
 public class FilteredObservableList<E> extends AbstractObservableList<E> {
-	public interface Filter<T> {
-		public boolean accept(T obj);
-	}
-
 	private final ObservableList<E> d_inner;
-	private Filter<E> d_filter;
+	private Predicate<E> d_filter;
 	private final ArrayList<Integer> d_indices = new ArrayList<Integer>();
 
-	public FilteredObservableList(final ObservableList<E> inner, final Filter<E> filter) {
+	public FilteredObservableList(final ObservableList<E> inner, final Predicate<E> filter) {
 		d_inner = inner;
 		d_filter = filter;
 		initializeIndices();
@@ -69,13 +67,13 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 
 	private void initializeIndices() {
 		for (int i = 0; i < d_inner.size(); ++i) {
-			if (d_filter.accept(d_inner.get(i))) {
+			if (d_filter.evaluate(d_inner.get(i))) {
 				d_indices.add(i);
 			}
 		}
 	}
 
-	public void setFilter(final Filter<E> filter) {
+	public void setFilter(final Predicate<E> filter) {
 		d_filter = filter;
 		final int oldSize = size();
 		if(!isEmpty()) {
@@ -88,9 +86,9 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 		}
 	}
 
-	protected <F> int findFirstIndex(final List<F> list, final Filter<F> filter) {
+	protected <F> int findFirstIndex(final List<F> list, final Predicate<F> filter) {
 		for (int i = 0; i < list.size(); ++i) {
-			if (filter.accept(list.get(i))) {
+			if (filter.evaluate(list.get(i))) {
 				return i;
 			}
 		}
@@ -104,7 +102,7 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 
 	@Override
 	public void add(final int index, final E element) {
-		if(!d_filter.accept(element)) throw new IllegalArgumentException("Cannot add " + element + ", it does not pass the filter of " + this);
+		if(!d_filter.evaluate(element)) throw new IllegalArgumentException("Cannot add " + element + ", it does not pass the filter of " + this);
 		if(index < d_indices.size()) {
 			d_inner.add(d_indices.get(index), element);
 		} else {
@@ -114,7 +112,7 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 
 	@Override
 	public E set(final int index, final E element) {
-		if(!d_filter.accept(element)) throw new IllegalArgumentException("Cannot add " + element + ", it does not pass the filter.");
+		if(!d_filter.evaluate(element)) throw new IllegalArgumentException("Cannot add " + element + ", it does not pass the filter.");
 		return d_inner.set(d_indices.get(index), element);
 	}
 
@@ -151,7 +149,7 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 
 		final int oldSize = d_indices.size();
 		for(int i = upper; i >= lower; --i) {
-			if (d_filter.accept(d_inner.get(i))) {
+			if (d_filter.evaluate(d_inner.get(i))) {
 				d_indices.add(first, i);
 			}
 		}
@@ -172,14 +170,14 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	private void elementChanged(final int elm) {
 		final int idx = Collections.binarySearch(d_indices, elm);
 		if (idx >= 0) {
-			if (d_filter.accept(d_inner.get(elm))) {
+			if (d_filter.evaluate(d_inner.get(elm))) {
 				fireContentsChanged(idx, idx);
 			} else {
 				d_indices.remove(idx);
 				fireIntervalRemoved(idx, idx);
 			}
 		} else {
-			if (d_filter.accept(d_inner.get(elm))) {
+			if (d_filter.evaluate(d_inner.get(elm))) {
 				d_indices.add(-(idx + 1), elm);
 				fireIntervalAdded(-(idx + 1), -(idx + 1));
 			} else {
@@ -203,9 +201,9 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	 * @return The index i of the first item d_indices.get(i) > x, or d_indices.size() if none exists.
 	 */
 	private int firstOver(final int x) {
-		final int last = findFirstIndex(d_indices, new Filter<Integer>() {
+		final int last = findFirstIndex(d_indices, new Predicate<Integer>() {
 			@Override
-			public boolean accept(final Integer index) {
+			public boolean evaluate(final Integer index) {
 				return index > x;
 			}
 		});
@@ -216,9 +214,9 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	 * @return The index i of the first item d_indices.get(i) >= x, or d_indices.size() if none exists.
 	 */
 	private int firstAtLeast(final int x) {
-		final int first = findFirstIndex(d_indices, new Filter<Integer>() {
+		final int first = findFirstIndex(d_indices, new Predicate<Integer>() {
 			@Override
-			public boolean accept(final Integer index) {
+			public boolean evaluate(final Integer index) {
 				return index >= x;
 			}
 		});
