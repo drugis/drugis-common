@@ -37,4 +37,28 @@ public class CollectionUtil {
 			return false;
 		return true;
 	}
+
+	/**
+	 * Let x[] be an array where 0 <= x[i] < c[i].
+	 * Increment x[] to the lexicographically next item.
+	 * If x[] is the lexicographically largest possible array, return false.
+	 */
+	public static boolean nextLexicographicElement(int x[], int c[]) {
+		assert(x.length == c.length);
+		final int l = x.length;
+		if (l < 1) {
+			return false;
+		}
+		
+		// iterate over the elements starting at the end, until we find an element that can be incremented.
+		for (int i = l - 1; i >= 0; --i) {
+			++x[i];
+			if (x[i] == c[i]) {
+				x[i] = 0;
+			} else {
+				return true; // greater permutation found
+			}
+		}
+		return false; // no greater permutation found (and array reset to {0, ...})
+	}
 }

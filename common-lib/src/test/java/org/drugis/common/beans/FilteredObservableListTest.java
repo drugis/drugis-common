@@ -37,7 +37,7 @@ import java.util.Collections;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.drugis.common.beans.FilteredObservableList.Filter;
+import org.apache.commons.collections15.Predicate;
 import org.drugis.common.event.ListDataEventMatcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,14 +47,14 @@ import com.jgoodies.binding.list.ObservableList;
 
 public class FilteredObservableListTest {
 	private ArrayListModel<String> d_inner;
-	private Filter<String> d_filter;
+	private Predicate<String> d_filter;
 	private FilteredObservableList<String> d_outer;
 
 	@Before
 	public void setUp() {
 		d_inner = new ArrayListModel<String>(Arrays.asList("Gert", "Daan", "Jan", "Klaas"));
-		d_filter = new FilteredObservableList.Filter<String>() {
-			public boolean accept(String str) {
+		d_filter = new Predicate<String>() {
+			public boolean evaluate(String str) {
 				return !str.contains("aa");
 			}
 		};
@@ -245,8 +245,8 @@ public class FilteredObservableListTest {
 		replay(mock);
 		d_outer.addListDataListener(mock);
 		
-		d_outer.setFilter(new FilteredObservableList.Filter<String>() {
-			public boolean accept(String str) {
+		d_outer.setFilter(new Predicate<String>() {
+			public boolean evaluate(String str) {
 				return !str.equals("Gert");
 			}
 		});
@@ -257,12 +257,12 @@ public class FilteredObservableListTest {
 	@Test
 	public void testSublistUpdating() {
 		ObservableList<String> list = new SortedSetModel<String>(Arrays.asList("Aa", "Ab", "Ba", "Bb"));
-		ObservableList<String> aList = new FilteredObservableList<String>(list, new Filter<String>(){
-			public boolean accept(String obj) {
+		ObservableList<String> aList = new FilteredObservableList<String>(list, new Predicate<String>(){
+			public boolean evaluate(String obj) {
 				return obj.charAt(0) == 'A';
 			}});
-		ObservableList<String> bList = new FilteredObservableList<String>(list, new Filter<String>(){
-			public boolean accept(String obj) {
+		ObservableList<String> bList = new FilteredObservableList<String>(list, new Predicate<String>(){
+			public boolean evaluate(String obj) {
 				return obj.charAt(0) == 'B';
 			}});
 		assertEquals(Arrays.asList("Aa", "Ab"), aList);
