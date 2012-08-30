@@ -34,11 +34,11 @@ public class BooleanAndModel extends AbstractBooleanModel {
 	public BooleanAndModel(List<ValueModel> models) {
 		super(models);
 	}
-
-	public BooleanAndModel(ValueModel bool1, ValueModel bool2) {
-		this(Arrays.asList(bool1, bool2));
+	
+	public BooleanAndModel(ValueModel ... models) {
+		this(Arrays.asList(models));
 	}
-
+	
 	protected Boolean calc() {
 		for (ValueModel model : d_models) {
 			if (!isBoolean(model)) {
