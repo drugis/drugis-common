@@ -10,7 +10,7 @@ import com.jgoodies.binding.value.ValueModel;
 
 public abstract class AbstractBooleanModel extends AbstractValueModel {
 	private static final long serialVersionUID = -9103843138797710602L;
-	protected Boolean d_val;
+	protected Boolean d_val = null;
 	protected final List<ValueModel> d_models;
 	private PropertyChangeListener d_listener;
 	
@@ -18,23 +18,27 @@ public abstract class AbstractBooleanModel extends AbstractValueModel {
 		d_models = new ArrayList<ValueModel>(models);
 		d_listener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				Object oldVal = d_val;
-				d_val = calc();
-				fireValueChange(oldVal, d_val);
+				update();
 			}
 		};
 		
 		for (ValueModel model : d_models) {
 			model.addValueChangeListener(d_listener);
 		}
+		update();
+	}
+	
+	private void update() {
+		Object oldVal = d_val;
 		d_val = calc();
+		fireValueChange(oldVal, d_val);
 	}
 	
 	public void add(ValueModel vm) {
 		if (!d_models.contains(vm)) {
 			d_models.add(vm);
 			vm.addValueChangeListener(d_listener);
-			d_val = calc();
+			update();
 		}
 	}
 	
@@ -42,7 +46,7 @@ public abstract class AbstractBooleanModel extends AbstractValueModel {
 		boolean removed = d_models.remove(vm);
 		if (removed) {
 			vm.removeValueChangeListener(d_listener);
-			d_val = calc();
+			update();
 		}
 	}
 
