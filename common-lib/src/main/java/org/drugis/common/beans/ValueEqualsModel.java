@@ -8,7 +8,7 @@ import com.jgoodies.binding.value.ValueModel;
 public class ValueEqualsModel extends AbstractConverter {
 	private static final long serialVersionUID = 7371154626359770150L;
 
-	private final Object d_expectedValue;
+	private Object d_expectedValue;
 
 	public ValueEqualsModel(final ValueModel model, final Object expectedValue) {
 		super(model);
@@ -23,5 +23,11 @@ public class ValueEqualsModel extends AbstractConverter {
 	@Override
 	public Object convertFromSubject(final Object subjectValue) {
 		return EqualsUtil.equal(d_expectedValue, subjectValue);
+	}
+
+	public void setExpected(Object expectedValue) {
+		Object oldVal = getValue();
+		d_expectedValue = expectedValue;
+		firePropertyChange("value", oldVal, getValue());
 	}
 }
