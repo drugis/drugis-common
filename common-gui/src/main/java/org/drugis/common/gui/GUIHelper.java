@@ -1,5 +1,6 @@
 package org.drugis.common.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -18,13 +19,15 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.windows.WindowsLookAndFeel;
 
 public class GUIHelper {
-	
-	public static final ImageLoader IMAGELOADER = new ImageLoader("/org/drugis/common/gui/"); 
+
+	public static final ImageLoader IMAGELOADER = new ImageLoader("/org/drugis/common/gui/");
+
+	public static final Color COLOR_WARNING = new Color(255, 214, 159);
 
 	public static void initializeLookAndFeel() {
 		try {
 			String osName = System.getProperty("os.name");
-			
+
 			if (osName.startsWith("Windows")) {
 				UIManager.setLookAndFeel(new WindowsLookAndFeel());
 			} else  if (osName.startsWith("Mac")) {
@@ -40,9 +43,9 @@ public class GUIHelper {
 			// Likely the Looks library is not in the class path; ignore.
 		}
 	}
-	
+
 	private static final Pattern wrapRE = Pattern.compile(".{0,79}(?:\\S(?:-| |$)|$)");
-	
+
 	private static String[] makeParts(String str) {
 		if (str != null && str != "") {
 		    List<String> list = new LinkedList<String>();
@@ -52,7 +55,7 @@ public class GUIHelper {
 		}
 		return new String[] {};
 	}
-	
+
 	public static String wordWrap(String input, boolean surround) {
 		String[] arr = makeParts(StringEscapeUtils.escapeHtml(input));
 		String resStr = "";
@@ -65,7 +68,7 @@ public class GUIHelper {
 			}
 			resStr += s;
 		}
-		
+
 		if (surround) {
 			return "<html>" + resStr + "</html>";
 		}
@@ -96,14 +99,14 @@ public class GUIHelper {
 		int yLoc = (int) parentLocation.getY() + (int) ((parentDim.getHeight() / 2) - (fsize.getHeight() / 2));
 		window.setLocation(new Point(xLoc, yLoc));
 	}
-	
+
 	public static String createToolTip(String text) {
 		if (text != null && text.trim().length() > 0) {
 			return wordWrap(text, true);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param String to be transformed into human readable format
 	 * @return human-readable string
@@ -119,5 +122,5 @@ public class GUIHelper {
 						" "
 				);
 	}
-	
+
 }
