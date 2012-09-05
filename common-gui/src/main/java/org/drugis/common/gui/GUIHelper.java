@@ -135,7 +135,7 @@ public class GUIHelper {
 				);
 	}
 
-	public static void addTaskFailureListener() {
+	private static void addTaskFailureListener() {
 		ThreadHandler.getInstance().addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getPropertyName().equals(ThreadHandler.PROPERTY_FAILED_TASK)) {
