@@ -64,7 +64,7 @@ public class TextComponentFactory {
 					BorderFactory.createEmptyBorder(4,4,4,4)));
 			return area;
 		}
-
+		addHyperlinkListener(area);
 		return putTextPaneInScrollPane(area);
 	}
 
@@ -87,6 +87,11 @@ public class TextComponentFactory {
 		pane.setText(str);
 		pane.setEditable(false);
 		pane.setOpaque(opaque);
+		addHyperlinkListener(pane);
+		return pane;
+	}
+
+	private static void addHyperlinkListener(JTextPane pane) {
 		pane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if(HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
@@ -94,9 +99,7 @@ public class TextComponentFactory {
 				}
 			}
 		});
-		return pane;
 	}
-
 
 	public static Dimension defaultTextPaneDimension(JTextPane area) {
 		return textPaneDimension(area, 230, 50);
