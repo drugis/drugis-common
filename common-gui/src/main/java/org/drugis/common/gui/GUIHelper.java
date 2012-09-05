@@ -5,20 +5,32 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.drugis.common.ImageLoader;
+import org.drugis.common.threading.ThreadHandler;
+import org.drugis.common.threading.event.TaskFailedEvent;
 
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.windows.WindowsLookAndFeel;
 
 public class GUIHelper {
+
+	public static class ErrorDialogExceptionHandler {
+		public void handle(Throwable e) {
+			e.printStackTrace();
+			ErrorDialog.showDialog(e, "Unexpected error.");
+		}
+	}
 
 	public static final ImageLoader IMAGELOADER = new ImageLoader("/org/drugis/common/gui/");
 
@@ -121,6 +133,40 @@ public class GUIHelper {
 						),
 						" "
 				);
+	}
+
+	public static void addTaskFailureListener() {
+		ThreadHandler.getInstance().addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getPropertyName().equals(ThreadHandler.PROPERTY_FAILED_TASK)) {
+					final TaskFailedEvent taskEvent = (TaskFailedEvent) event.getNewValue();
+
+					Runnable r = new Runnable() {
+						public void run() {
+							Throwable cause = taskEvent.getCause();
+							ErrorDialog.showDialog(cause, taskEvent.getSource() + " failed");
+						}
+					};
+					SwingUtilities.invokeLater(r);
+				}
+			}
+		});
+	}
+
+	public static void startApplicationWithErrorHandler(Runnable main, String helpText) {
+		System.setProperty("sun.awt.exception.handler", ErrorDialogExceptionHandler.class.getName());
+		ErrorDialog.setHelpText(helpText);
+		ThreadGroup threadGroup = new ThreadGroup("ExceptionGroup") {
+			public void uncaughtException(Thread t, Throwable e) {
+				e.printStackTrace();
+				ErrorDialog.showDialog(e, "Unexpected error.");
+			}
+		};
+
+		addTaskFailureListener();
+
+		Thread mainThread = new Thread(threadGroup, main, "Main thread");
+		mainThread.start();
 	}
 
 }
