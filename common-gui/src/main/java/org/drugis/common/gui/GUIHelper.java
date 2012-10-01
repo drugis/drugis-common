@@ -1,9 +1,6 @@
 package org.drugis.common.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -88,28 +85,13 @@ public class GUIHelper {
 	}
 
 	/**
-	 * Center window on screen.
-	 * @param window to center
-	 */
-	public static void centerWindow(Window window) {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension fsize = window.getSize();
-		int xLoc = (int) ((screenSize.getWidth() / 2) - (fsize.getWidth() / 2));
-		int yLoc = (int) ((screenSize.getHeight() / 2) - (fsize.getHeight() / 2));
-		window.setLocation(new Point(xLoc, yLoc));
-	}
-
-	/**
 	 * Center window on another window.
 	 * @param window to center
+	 * @deprecated Should use {@link Window#setLocationByPlatform(boolean)}
 	 */
+	@Deprecated
 	public static void centerWindow(Window window, Window parent) {
-		Point parentLocation = parent.getLocation();
-		Dimension parentDim = parent.getSize();
-		Dimension fsize = window.getSize();
-		int xLoc = (int) parentLocation.getX() + (int) ((parentDim.getWidth() / 2) - (fsize.getWidth() / 2));
-		int yLoc = (int) parentLocation.getY() + (int) ((parentDim.getHeight() / 2) - (fsize.getHeight() / 2));
-		window.setLocation(new Point(xLoc, yLoc));
+		window.setLocationByPlatform(true);
 	}
 
 	public static String createToolTip(String text) {
