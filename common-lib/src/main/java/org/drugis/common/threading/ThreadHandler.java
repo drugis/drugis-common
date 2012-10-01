@@ -111,6 +111,7 @@ public class ThreadHandler extends AbstractObservable {
 		d_scheduledTasks = new LinkedList<Task>();
 		d_runningTasks = new LinkedList<SuspendableThreadWrapper>();
 		d_cleaner = new Thread(new RunQueueCleaner());
+		d_cleaner.setDaemon(true);
 		d_cleaner.start();
 	}
 	

@@ -20,18 +20,18 @@ public class BooleanModelTest {
 	public void testValuesBooleanNot() {
 		assertNull(new BooleanNotModel(new ValueHolder(null)).getValue());
 		assertNull(new BooleanNotModel(new ValueHolder(new Object())).getValue());
-	
+
 		assertFalse(new BooleanNotModel(new ValueHolder(true)).getValue());
 		assertTrue(new BooleanNotModel(new ValueHolder(false)).getValue());
 	}
 
 	@Test
-	public void testValuesBooleanAnd() {	
+	public void testValuesBooleanAnd() {
 		ValueModel model1 = new ValueHolder(null);
 		ValueModel model2 = new ValueHolder(null);
 		assertNull(new BooleanAndModel(model1, model2).getValue());
 		assertNull(new BooleanAndModel(Arrays.asList(new ValueModel[] {model1, model2})).getValue());
-		
+
 		model1.setValue(false);
 		assertFalse(new BooleanAndModel(model1, model2).getValue());
 		model2.setValue(false);
@@ -42,12 +42,12 @@ public class BooleanModelTest {
 	}
 
 	@Test
-	public void testValuesBooleanOr() {	
+	public void testValuesBooleanOr() {
 		ValueModel model1 = new ValueHolder(null);
 		ValueModel model2 = new ValueHolder(null);
 		assertNull(new BooleanOrModel(model1, model2).getValue());
 		assertNull(new BooleanOrModel(Arrays.asList(new ValueModel[] {model1, model2})).getValue());
-		
+
 		model1.setValue(false);
 		assertNull(new BooleanOrModel(model1, model2).getValue());
 		model2.setValue(false);
@@ -57,13 +57,13 @@ public class BooleanModelTest {
 		model1.setValue(true);
 		assertTrue(new BooleanOrModel(model1, model2).getValue());
 	}
-	
-	
+
+
 	@Test(expected=UnsupportedOperationException.class)
 	public void testSetValueNotSupported() {
 		new BooleanNotModel(new ValueHolder(null)).setValue("");
 	}
-	
+
 	@Test
 	public void testEventChainingNotModel() {
 		ValueHolder holder = new ValueHolder(null);
