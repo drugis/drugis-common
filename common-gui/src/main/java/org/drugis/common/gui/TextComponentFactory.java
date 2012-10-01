@@ -58,13 +58,13 @@ public class TextComponentFactory {
 		area.setText(html);
 		area.setCaretPosition(0);
 		area.setEditable(false);
+		addHyperlinkListener(area);
 
 		if (!scrollable) {
 			area.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),
 					BorderFactory.createEmptyBorder(4,4,4,4)));
 			return area;
 		}
-		addHyperlinkListener(area);
 		return putTextPaneInScrollPane(area);
 	}
 
