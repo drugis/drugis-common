@@ -24,9 +24,12 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.util.List;
 
+import org.drugis.common.event.IndifferentListDataListener;
+
 import com.jgoodies.binding.BindingUtils;
 import com.jgoodies.binding.beans.BeanUtils;
 import com.jgoodies.binding.beans.Observable;
+import com.jgoodies.binding.list.ObservableList;
 import com.jgoodies.binding.value.AbstractValueModel;
 
 /**
@@ -41,6 +44,15 @@ public class PropertyUniqueModel<T extends Observable> extends AbstractValueMode
 	private PropertyDescriptor d_property;
 	private boolean d_val;
 
+	public PropertyUniqueModel(ObservableList<T> list, T item, final String propertyName) {
+		this((List<T>)list, item, propertyName);
+		list.addListDataListener(new IndifferentListDataListener() {
+			protected void update() {
+				PropertyUniqueModel.this.update();
+			}
+		});
+	}
+	
 	public PropertyUniqueModel(List<T> list, T item, final String propertyName) {
 		d_list = list;
 		d_item = item;

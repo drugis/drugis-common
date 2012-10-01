@@ -2,8 +2,8 @@
  * This file is part of ADDIS (Aggregate Data Drug Information System).
  * ADDIS is distributed from http://drugis.org/.
  * Copyright (C) 2009 Gert van Valkenhoef, Tommi Tervonen.
- * Copyright (C) 2010 Gert van Valkenhoef, Tommi Tervonen, 
- * Tijs Zwinkels, Maarten Jacobs, Hanno Koeslag, Florin Schimbinschi, 
+ * Copyright (C) 2010 Gert van Valkenhoef, Tommi Tervonen,
+ * Tijs Zwinkels, Maarten Jacobs, Hanno Koeslag, Florin Schimbinschi,
  * Ahmad Kamal, Daniel Reid.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,18 +40,18 @@ public class ThreadHandlerIT {
 
 
 	public static class SuspendableTestThread extends AbstractSuspendable {
-		
+
 		private final int d_ms;
 		boolean d_done;
 
-		public SuspendableTestThread(int ms) {
+		public SuspendableTestThread(final int ms) {
 			d_ms = ms;
 		}
-		
+
 		public synchronized boolean getDone() {
 			return d_done;
 		}
-		
+
 		public void run() {
 			if (d_done)
 				throw new IllegalStateException("Thread already done.");
@@ -63,10 +63,10 @@ public class ThreadHandlerIT {
 			}
 			d_done = true;
 		}
-		
-		// FIXME: Hacky.
+
+		// FIXME: Breaks the contract of equals by being not transitive.
 		@Override
-		public boolean equals(Object o) {
+		public boolean equals(final Object o) {
 			if (o instanceof SuspendableThreadWrapper)
 				return ((SuspendableThreadWrapper) o).getRunnable().equals(this);
 			else if (o instanceof SuspendableTestThread)
@@ -74,25 +74,25 @@ public class ThreadHandlerIT {
 			return false;
 		}
 	};
-	
+
 	class NonSuspendableTestThread implements Runnable {
-		
+
 		private final int d_ms;
 		boolean d_done;
 
-		public NonSuspendableTestThread(int ms) {
+		public NonSuspendableTestThread(final int ms) {
 			d_ms = ms;
 		}
-		
+
 		public synchronized boolean getDone() {
 			return d_done;
 		}
-		
+
 		@Override
 		public String toString() {
 			return ""+d_ms;
 		}
-		
+
 		public void run() {
 			if (d_done)
 				throw new IllegalStateException("Thread already done.");
@@ -103,18 +103,18 @@ public class ThreadHandlerIT {
 			d_done = true;
 		}
 	};
-	
+
 	@Before
 	public void setUp() {
 		ThreadHandler.getInstance().clear();
 		d_numCores = Runtime.getRuntime().availableProcessors();
 	}
-	
+
 	@Test
 	public void testQueueingOrder() {
 		LinkedList<SimpleTask> ToDo1 = new LinkedList<SimpleTask>();
 		LinkedList<SimpleTask> ToDo2 = new LinkedList<SimpleTask>();
-		
+
 		for (int i = 0; i < d_numCores; ++i) {
 			ToDo1.add(new SimpleSuspendableTask(new SuspendableTestThread(400)));
 			if (i < d_numCores - 1) {
@@ -122,7 +122,7 @@ public class ThreadHandlerIT {
 			}
 		}
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		th.scheduleTasks(ToDo1); // fills the available cores
 		th.scheduleTasks(ToDo2); // should push back every task except ToDo1[0].
 
@@ -131,29 +131,29 @@ public class ThreadHandlerIT {
 		expected.add(ToDo1.get(0));
 		assertEquals(expected, th.getRunningTasks());
 	}
-	
 
-	
+
+
 	@Test
 	public void testReprioritise() {
 		LinkedList<SimpleTask> ToDo1 = new LinkedList<SimpleTask>();
-						
+
 		final int NUMMODELS = d_numCores + 2;
-		
+
 		for(int i=0; i < NUMMODELS; ++i) {
 			ToDo1.add(new SimpleSuspendableTask(new SuspendableTestThread((i+4) * 400)));
 		}
-		
+
 		ThreadHandler th = ThreadHandler.getInstance();
 		th.scheduleTasks(ToDo1);
-		
+
 		List<SimpleTask> nCoresHeadList = ToDo1.subList(0, d_numCores);
 		List<SimpleTask> nCoresHeadListComplement = ToDo1.subList(d_numCores, d_numCores + (NUMMODELS - d_numCores));
 
 		sleepLongEnough();
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList));
 		assertTrue(th.getQueuedTaskList().containsAll(ToDo1));
-		
+
 		// Note: NOP; rescheduling already-running tasks should not change anything
 		th.scheduleTasks(nCoresHeadList);
 		sleepLongEnough();
@@ -167,7 +167,7 @@ public class ThreadHandlerIT {
 		assertTrue(th.getRunningTasks().containsAll(nCoresHeadList.subList(0, d_numCores - 2)));
 		assertTrue(th.getQueuedTaskList().containsAll(ToDo1));
 	}
-	
+
 	@Test
 	public void testReprioritiseDontTouchNonSuspendable() {
 
@@ -179,7 +179,7 @@ public class ThreadHandlerIT {
 		}
 		ToDo1.add(new SimpleSuspendableTask(new NonSuspendableTestThread(600)));
 		ToDo2.add(new SimpleSuspendableTask(new SuspendableTestThread(400)));
-		
+
 		ThreadHandler th = ThreadHandler.getInstance();
 		th.scheduleTasks(ToDo1);
 
@@ -189,18 +189,18 @@ public class ThreadHandlerIT {
 		LinkedList<SimpleTask> expected = new LinkedList<SimpleTask>(ToDo2.subList(0, ToDo2.size() - 1));
 		expected.addFirst(ToDo1.getLast());
 		th.scheduleTasks(ToDo2);
-				
+
 		sleepLongEnough();
 		assertEquals(expected, th.getRunningTasks());
 	}
-	
+
 	@Test
 	public void testHighLoad() {
 		final int NUMTHREADS = 100;
 		LinkedList<SimpleTask> runnables = new LinkedList<SimpleTask>();
 		ThreadHandler th = ThreadHandler.getInstance();
 		ArrayList<SimpleTask> threadList = new ArrayList<SimpleTask>(NUMTHREADS);
-		
+
 		for (int i=0; i<NUMTHREADS; ++i) {
 			SimpleTask mod = new SimpleSuspendableTask(new SuspendableTestThread((int) (Math.random() * 100)));
 			threadList.add(mod);
@@ -212,19 +212,19 @@ public class ThreadHandlerIT {
 			sleep((int) (Math.random() * 50));
 			assertTrue(Runtime.getRuntime().availableProcessors() >= th.d_runningTasks.size());
 		}
-		
+
 		assertTrue(Runtime.getRuntime().availableProcessors() >= th.d_runningTasks.size());
 		waitTillDone();
 		for (SimpleTask mod : threadList) {
 			assertTrue(mod.isFinished());
 		}
 	}
-	
+
 	@Test
 	public void testTakeSuspendableSlot() {
 		waitTillDone();
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		th.scheduleTask(new SimpleSuspendableTask(new SuspendableTestThread(300)));
 		for (int i=0; i<d_numCores -1; ++i)
 			th.scheduleTask(new SimpleSuspendableTask(new NonSuspendableTestThread(300)));
@@ -234,7 +234,7 @@ public class ThreadHandlerIT {
 		assertTrue(th.getRunningTasks().contains(newTask));
 
 		waitTillDone();
-		
+
 		for (int i=0; i<d_numCores -1; ++i)
 			th.scheduleTask(new SimpleSuspendableTask(new NonSuspendableTestThread(300)));
 		th.scheduleTask(new SimpleSuspendableTask(new SuspendableTestThread(300)));
@@ -245,82 +245,82 @@ public class ThreadHandlerIT {
 
 		waitTillDone();
 	}
-	
+
 
 	@Test
 	public void testRemoveWaitingSimpleTask() {
 		waitTillDone();
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		List<SimpleTask> runthreads = new ArrayList<SimpleTask>();
 		SimpleTask t = new SimpleSuspendableTask(new SuspendableTestThread(100));
 		for (int i=0; i<d_numCores + 1; ++i) {
-			runthreads.add(new SimpleSuspendableTask(new SuspendableTestThread(100))); 
+			runthreads.add(new SimpleSuspendableTask(new SuspendableTestThread(100)));
 		}
 		runthreads.add(t);// 2 threads in waiting list.
 		th.scheduleTasks(runthreads);
 		assertEquals(d_numCores + 2, th.getQueuedTasks());
-		
+
 		th.abortTask(t);
 		assertEquals(d_numCores + 1, th.getQueuedTasks());
-		
+
 		waitTillDone();
 		assertFalse(t.isFinished());
 	}
-	
+
 	@Test
 	public void testClearRemovesWaitingTasks() {
 		waitTillDone();
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		List<SimpleTask> runthreads = new ArrayList<SimpleTask>();
 		for (int i=0; i<d_numCores + 2; ++i) // 2 threads in waiting list.
 			runthreads.add(new SimpleSuspendableTask(new SuspendableTestThread(100)));
 		th.scheduleTasks(runthreads);
 		assertEquals(d_numCores + 2, th.getQueuedTasks());
-		
+
 		th.clear();
-		
+
 		assertEquals(0, th.getQueuedTasks());
 	}
-	
+
 	@Test
 	public void testRemoveSuspendableRunningTask() {
 		waitTillDone();
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		SimpleTask task = new SimpleSuspendableTask(new SuspendableTestThread(10000));
 		th.scheduleTask(task);
 		sleepLongEnough();
 		assertEquals(1, th.getRunningThreads());
-		
+
 		th.abortTask(task);
-		
+
 		sleepLongEnough();
 		assertEquals(0, th.getRunningThreads());
 		assertFalse(task.isFinished());
 		assertTrue(task.isAborted());
 		assertFalse(task.isSuspended());
 	}
-	
+
 	@Test
 	public void testClearRemovesSuspendableRunningTasks() {
 		waitTillDone();
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		List<SimpleTask> runthreads = new ArrayList<SimpleTask>();
 		for (int i=0; i<d_numCores + 2; ++i) // 2 threads in waiting list.
 			runthreads.add(new SimpleSuspendableTask(new SuspendableTestThread(300)));
 		th.scheduleTasks(runthreads);
 		sleepLongEnough();
 		assertEquals(d_numCores, th.getRunningThreads());
-		
+
 		th.clear();
-		
+
 		sleepLongEnough();
 		assertEquals(0, th.getRunningThreads());
 	}
-	
+
 	@Test
 	public void testRemoveCantRemoveUnsuspendableRunningTask() {
 		waitTillDone();
@@ -329,29 +329,29 @@ public class ThreadHandlerIT {
 		th.scheduleTask(t);
 		sleepLongEnough();
 		assertEquals(1, th.getRunningThreads());
-		
+
 		assertFalse(th.abortTask(t));
 
 		sleepLongEnough();
 		assertEquals(1, th.getRunningThreads());
 	}
-	
-	
+
+
 	@Test
 	public void testClearCantRemoveUnsuspendableRunningTasks() {
 		waitTillDone();
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		List<SimpleTask> runthreads = new ArrayList<SimpleTask>();
 		for (int i=0; i<d_numCores; ++i) // numcore threads running.
 			runthreads.add(new SimpleSuspendableTask(new NonSuspendableTestThread(600)));
 		th.scheduleTasks(runthreads);
-		
+
 		sleepLongEnough();
 		assertEquals(d_numCores, th.getRunningThreads());
-		
+
 		th.clear();
-		
+
 		sleepLongEnough();
 		assertEquals(d_numCores, th.getRunningThreads());
 	}
@@ -362,15 +362,15 @@ public class ThreadHandlerIT {
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	class SomeCompositeTask implements CompositeTask {
 		boolean d_started = false;
-		
+
 		SimpleTask d_first = new SimpleSuspendableTask(new SuspendableTestThread(600));
 		SimpleTask d_middle1 = new SimpleSuspendableTask(new SuspendableTestThread(600));
 		SimpleTask d_middle2 = new SimpleSuspendableTask(new SuspendableTestThread(600));
 		SimpleTask d_last = new SimpleSuspendableTask(new SuspendableTestThread(600));
-		
+
 		public List<SimpleTask> getNextTasks() {
 			if (!d_started) {
 				throw new RuntimeException("Can't get tasks if not started");
@@ -400,27 +400,27 @@ public class ThreadHandlerIT {
 			return d_last.isFinished();
 		}
 
-		public void addTaskListener(TaskListener l) {}
-		public void removeTaskListener(TaskListener l) {}
+		public void addTaskListener(final TaskListener l) {}
+		public void removeTaskListener(final TaskListener l) {}
 		public boolean isFailed() { return false; }
 		public Throwable getFailureCause() { return null; }
 		public boolean isAborted() { return false; }
-		
+
 	}
-	
+
 	@Test
 	public void testScheduleCompositeTask() {
 		waitTillDone();
-		
+
 		ThreadHandler threadHandler = ThreadHandler.getInstance();
 
 		SomeCompositeTask task = new SomeCompositeTask();
 		threadHandler.scheduleTask(task);
-		
+
 		sleepLongEnough();
 		assertEquals(Collections.singletonList(task.d_first), threadHandler.getRunningTasks());
 		assertEquals(Collections.singletonList(task), threadHandler.getQueuedTaskList());
-		
+
 		// wait for first task to finish and subsequent tasks to be enqueued
 		waitTillDone(task.d_first);
 		sleepLongEnough();
@@ -431,7 +431,7 @@ public class ThreadHandlerIT {
 			expected.add(task.d_middle2);
 		}
 		assertEquals(expected, threadHandler.getRunningTasks());
-		
+
 		// wait for last task to be finished and its finishing to be detected
 		waitTillDone(task.d_last);
 		sleepLongEnough();
@@ -440,11 +440,11 @@ public class ThreadHandlerIT {
 		assertTrue(task.isFinished());
 		assertEquals(Collections.<Task>emptyList(), threadHandler.getQueuedTaskList());
 	}
-	
+
 	@Test
 	public void testRemoveCompositeTask() {
 		waitTillDone();
-		
+
 		ThreadHandler th = ThreadHandler.getInstance();
 
 		SomeCompositeTask task = new SomeCompositeTask();
@@ -465,13 +465,13 @@ public class ThreadHandlerIT {
 		assertEquals(0, th.getRunningTasks().size());
 		assertEquals(0, th.getQueuedTaskList().size());
 	}
-	
+
 	@Test
 	public void testRemoveWaitingCompositeTask() {
 		waitTillDone();
-		
+
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		List<Task> tasks = new ArrayList<Task>();
 		for (int i = 0; i < d_numCores; ++i) {
 			tasks.add(new SimpleSuspendableTask(new SuspendableTestThread(300)));
@@ -479,20 +479,20 @@ public class ThreadHandlerIT {
 
 		SomeCompositeTask composite = new SomeCompositeTask();
 		tasks.add(composite);
-		
+
 		th.scheduleTasks(tasks);
 		sleepLongEnough();
 
 		th.abortTask(composite);
 		sleepLongEnough();
 	}
-	
+
 	@Test
 	public void testRemoveHalfWaitingCompositeTask() {
 		waitTillDone();
-		
+
 		ThreadHandler th = ThreadHandler.getInstance();
-		
+
 		List<Task> tasks = new ArrayList<Task>();
 		for (int i = 0; i < d_numCores - 1; ++i) {
 			tasks.add(new SimpleSuspendableTask(new SuspendableTestThread(1000)));
@@ -500,7 +500,7 @@ public class ThreadHandlerIT {
 
 		SomeCompositeTask composite = new SomeCompositeTask();
 		tasks.add(composite);
-		
+
 		th.scheduleTasks(tasks);
 		waitTillDone(composite.d_first);
 		sleepLongEnough();
@@ -508,8 +508,8 @@ public class ThreadHandlerIT {
 		th.abortTask(composite);
 		sleepLongEnough();
 	}
-	
-	private void waitTillDone(SimpleTask task) {
+
+	private void waitTillDone(final SimpleTask task) {
 		try {
 			TaskUtil.waitUntilReady(task);
 		} catch (InterruptedException e) {
@@ -522,10 +522,10 @@ public class ThreadHandlerIT {
 		ThreadHandler threadHandler = ThreadHandler.getInstance();
 		SomeCompositeTask task = new SomeCompositeTask();
 		SimpleTask duplicate = task.d_first;
-		
+
 		threadHandler.scheduleTask(duplicate);
 		threadHandler.scheduleTask(task);
-		
+
 		sleepLongEnough();
 		List<Task> expected = new ArrayList<Task>();
 		expected.add(task);
@@ -533,16 +533,16 @@ public class ThreadHandlerIT {
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
 		assertEquals(expected, threadHandler.getQueuedTaskList());
 	}
-	
+
 	@Test
 	public void testScheduleCompositeTaskWithDuplicateTaskVV() {
 		ThreadHandler threadHandler = ThreadHandler.getInstance();
 		SomeCompositeTask task = new SomeCompositeTask();
 		SimpleTask duplicate = task.d_first;
-		
+
 		threadHandler.scheduleTask(task);
 		threadHandler.scheduleTask(duplicate);
-		
+
 		sleepLongEnough();
 		List<Task> expected = new ArrayList<Task>();
 		expected.add(duplicate);
@@ -550,23 +550,23 @@ public class ThreadHandlerIT {
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
 		assertEquals(expected, threadHandler.getQueuedTaskList());
 	}
-	
+
 	@Test
 	public void testRemoveCompositeTaskWithDuplicateTask() {
 		ThreadHandler threadHandler = ThreadHandler.getInstance();
 		SomeCompositeTask task = new SomeCompositeTask();
 		SimpleTask duplicate = task.d_first;
-		
+
 		threadHandler.scheduleTask(duplicate);
 		threadHandler.scheduleTask(task);
-		
+
 		sleepLongEnough();
 		List<Task> expected = new ArrayList<Task>();
 		expected.add(task);
 		expected.add(duplicate);
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
 		assertEquals(expected, threadHandler.getQueuedTaskList());
-		
+
 		threadHandler.abortTask(task);
 		sleepLongEnough();
 
@@ -575,16 +575,16 @@ public class ThreadHandlerIT {
 		assertEquals(expected, threadHandler.getQueuedTaskList());
 		assertEquals(Collections.singletonList(duplicate), threadHandler.getRunningTasks());
 	}
-	
+
 	public static void waitTillDone() {
 		ThreadHandler th = ThreadHandler.getInstance();
 		while ((th.d_runningTasks.size() > 0) || (th.d_scheduledTasks.size() > 0)) {
 			sleep(100);
 		}
 	}
-	
 
-	private static void sleep(int ms ) {
+
+	private static void sleep(final int ms ) {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {
