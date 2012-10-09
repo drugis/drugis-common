@@ -15,7 +15,7 @@ import org.drugis.common.threading.event.TaskEvent;
 import org.drugis.common.threading.event.TaskEvent.EventType;
 import org.drugis.common.threading.event.TaskProgressEvent;
 
-public class TaskProgressModel extends AbstractProgressModel implements TextProgressModel {
+public class TaskProgressModel extends AbstractProgressModel {
 	private final class PhaseListener implements TaskListener {
 		public void taskEvent(TaskEvent event) {
 			synchronized(d_lock) {
@@ -38,7 +38,7 @@ public class TaskProgressModel extends AbstractProgressModel implements TextProg
 		setTask(task);
 	}
 
-	public void setTask(Task task) {
+	void setTask(Task task) {
 		if (d_task != null) {
 			d_task.removeTaskListener(d_taskListener);
 		}
@@ -99,53 +99,40 @@ public class TaskProgressModel extends AbstractProgressModel implements TextProg
 	protected class PhaseTaskListener implements TaskListener {
 		public void taskEvent(TaskEvent e) {
 			synchronized(d_lock) {
-				updateTaskStatus(e);
-				updatePhaseStatus(e);
-			}
-		}
-
-		private void updatePhaseStatus(TaskEvent e) {
-			EventType type = e.getType();
-			if (e instanceof PhaseEvent) {
-				PhaseEvent evt = (PhaseEvent) e;
-				Task phase = evt.getPhase();
-				if (type.equals(TaskEvent.EventType.PHASE_STARTED)) {
-					d_phases.add(phase);
-					phase.addTaskListener(d_phaseListener);
-					d_phaseProgress.put(phase, null);
-				} else if (type.equals(TaskEvent.EventType.PHASE_FINISHED)) {
-					phase.removeTaskListener(d_phaseListener);
-					d_phaseProgress.remove(phase);
-					d_phases.remove(phase);
+				EventType type = e.getType();
+				if (type.equals(TaskEvent.EventType.TASK_STARTED)) {
+					setProgress(0.0);
+				} else if (type.equals(TaskEvent.EventType.TASK_PROGRESS)) {
+					setDeterminate(true);
+					setProgress(calcProgress((TaskProgressEvent) e));
+				} else if (type.equals(TaskEvent.EventType.TASK_FINISHED)) {
+					setDeterminate(true);
+					setProgress(1.0);
+				} else if (type.equals(TaskEvent.EventType.TASK_FAILED)) {
+					setDeterminate(true);
+					setProgress(0.0);
+				} else if (type.equals(TaskEvent.EventType.TASK_ABORTED)) {
+					setDeterminate(true);
+					setProgress(0.0);
+				} else if (type.equals(TaskEvent.EventType.TASK_RESTARTED)) {
+					setDeterminate(true);
+					setProgress(0.0);
+				} else if (e instanceof PhaseEvent) {
+					PhaseEvent evt = (PhaseEvent) e;
+					Task phase = evt.getPhase();
+					if (type.equals(TaskEvent.EventType.PHASE_STARTED)) {
+						d_phases.add(phase);
+						phase.addTaskListener(d_phaseListener);
+						d_phaseProgress.put(phase, null);
+					} else if (type.equals(TaskEvent.EventType.PHASE_FINISHED)) {
+						phase.removeTaskListener(d_phaseListener);
+						d_phaseProgress.remove(phase);
+						d_phases.remove(phase);
+					}
+					setDeterminate(calcDeterminate());
+					setProgress(calcProgress());
 				}
-				setDeterminate(calcDeterminate());
-				setProgress(calcProgress());
 			}
-		}
-
-		private boolean updateTaskStatus(TaskEvent e) {
-			EventType type = e.getType();
-			if (type.equals(TaskEvent.EventType.TASK_STARTED)) {
-				setProgress(0.0);
-			} else if (type.equals(TaskEvent.EventType.TASK_PROGRESS)) {
-				setDeterminate(true);
-				setProgress(calcProgress((TaskProgressEvent) e));
-			} else if (type.equals(TaskEvent.EventType.TASK_FINISHED)) {
-				setDeterminate(true);
-				setProgress(1.0);
-			} else if (type.equals(TaskEvent.EventType.TASK_FAILED)) {
-				setDeterminate(true);
-				setProgress(0.0);
-			} else if (type.equals(TaskEvent.EventType.TASK_ABORTED)) {
-				setDeterminate(true);
-				setProgress(0.0);
-			} else if (type.equals(TaskEvent.EventType.TASK_RESTARTED)) {
-				setDeterminate(true);
-				setProgress(0.0);
-			} else {
-				return false;
-			}
-			return true;
 		}
 	}
 }
