@@ -24,7 +24,7 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 		public void taskEvent(TaskEvent event) {
 			synchronized(d_lock) {
 				Task source = event.getSource();
-				if(d_phaseProgress.containsKey(source)) {
+				if(d_progress.containsKey(source)) {
 					updateTaskProgress(source, event);
 				}
 			}
@@ -34,14 +34,14 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 			EventType type = event.getType();
 			switch (type) {
 				case TASK_FINISHED:
-					d_phaseProgress.put(source, 1.0);
+					d_progress.put(source, 1.0);
 					break;
 				case TASK_PROGRESS:
-					d_phaseProgress.put(source, calcProgress((TaskProgressEvent) event));
+					d_progress.put(source, calcProgress((TaskProgressEvent) event));
 					break;
 				case TASK_RESTARTED:
 				case TASK_STARTED:
-					d_phaseProgress.put(source, 0.0);
+					d_progress.put(source, 0.0);
 				default:
 					break;
 			}
@@ -52,22 +52,20 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 	}
 
 	private Set<Task> d_runningTasks = new HashSet<Task>();
-	private List<Task> d_phases = new ArrayList<Task>();
-	private HashMap<Task, Double> d_phaseProgress = new HashMap<Task, Double>();
-	private PhaseListener d_phaseListener = new PhaseListener();
+	private Set<Task> d_iterables = new HashSet<Task>();
+	private HashMap<Task, Double> d_progress = new HashMap<Task, Double>();
+	private PhaseListener d_listener = new PhaseListener();
 	private Object d_lock = new Object();
-	private int d_numberOfIterables = 0;
 
 
 	public ActivityTaskProgressModel(ActivityTask activity) {
 		d_task = activity;
+		Set<Task> states = activity.getModel().getStates();
 
 		if(!d_task.isFinished()) {
-			Set<Task> states = activity.getModel().getStates();
 			for(Task state : states) {
-				d_phaseProgress.put(state, 0.0);
-				state.addTaskListener(d_phaseListener);
-				d_phases.add(state);
+				d_progress.put(state, 0.0);
+				state.addTaskListener(d_listener);
 			}
 		}
 		d_task.addTaskListener(new TaskListener() {
@@ -84,11 +82,11 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 				}
 			}
 		});
-		d_numberOfIterables = getIterables(d_phases).size();
+		d_iterables.addAll(findIterables(states));
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<? extends IterativeTask> getIterables(Collection<? extends Task> collection) {
+	private Collection<? extends IterativeTask> findIterables(Collection<? extends Task> collection) {
 		return CollectionUtils.select(collection, PredicateUtils.instanceofPredicate(IterativeTask.class));
 	}
 
@@ -96,11 +94,11 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 	protected Double calcProgress() {
 		double progress = 0;
 
-		for(IterativeTask task : getIterables(d_phases)) {
-			Double value = d_phaseProgress.get(task);
+		for(Task task : d_iterables) {
+			Double value = d_progress.get(task);
 			progress = progress + ((value == null) ? 0 : value);
 		}
-		return progress / d_numberOfIterables;
+		return progress / d_iterables.size();
 	}
 
 
@@ -108,7 +106,7 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 		List<String> phaseStrings = new ArrayList<String>();
 		synchronized (d_lock) {
 			for (Task p : d_runningTasks) {
-				phaseStrings.add(p.toString() + ": " + formatProgress(d_phaseProgress.get(p)));
+				phaseStrings.add(p.toString() + ": " + formatProgress(d_progress.get(p)));
 			}
 		}
 		return phaseStrings;
@@ -116,7 +114,7 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 
 	@Override
 	protected boolean calcDeterminate() {
-		return !CollectionUtils.intersection(d_runningTasks, getIterables(d_phases)).isEmpty();
+		return !CollectionUtils.intersection(d_runningTasks, d_iterables).isEmpty();
 	}
 
 }
