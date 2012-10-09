@@ -2,8 +2,8 @@
  * This file is part of ADDIS (Aggregate Data Drug Information System).
  * ADDIS is distributed from http://drugis.org/.
  * Copyright (C) 2009 Gert van Valkenhoef, Tommi Tervonen.
- * Copyright (C) 2010 Gert van Valkenhoef, Tommi Tervonen, 
- * Tijs Zwinkels, Maarten Jacobs, Hanno Koeslag, Florin Schimbinschi, 
+ * Copyright (C) 2010 Gert van Valkenhoef, Tommi Tervonen,
+ * Tijs Zwinkels, Maarten Jacobs, Hanno Koeslag, Florin Schimbinschi,
  * Ahmad Kamal, Daniel Reid.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,19 +29,25 @@ public class TaskUtil {
 	public static void run(ActivityModel model) throws InterruptedException {
 		run(new ActivityTask(model));
 	}
-	
+
 	public static void run(Task task) throws InterruptedException {
-		ThreadHandler th = ThreadHandler.getInstance();
-		th.scheduleTask(task);
+		start(task);
 		waitUntilReady(task);
 	}
-	
+
+	private static void start(Task task) {
+		ThreadHandler th = ThreadHandler.getInstance();
+		th.scheduleTask(task);
+	}
+
 	public static void waitUntilReady(Task task) throws InterruptedException {
-		while (!task.isFinished() && !task.isFailed() && !task.isAborted()) {
+		while (isRunning(task)) {
 			Thread.sleep(100);
 		}
-		if (task.isFailed()) {
-			throw new RuntimeException("Task failed", task.getFailureCause());
-		}
+	}
+
+	public static boolean isRunning(Task task) {
+		if (task.isFailed()) throw new RuntimeException("Task failed", task.getFailureCause());
+		return !task.isFinished() && !task.isAborted();
 	}
 }
