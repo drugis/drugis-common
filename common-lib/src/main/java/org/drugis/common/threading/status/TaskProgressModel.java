@@ -15,7 +15,7 @@ import org.drugis.common.threading.event.TaskEvent;
 import org.drugis.common.threading.event.TaskEvent.EventType;
 import org.drugis.common.threading.event.TaskProgressEvent;
 
-public class TaskProgressModel extends AbstractProgressModel implements TextProgressModel {
+public class TaskProgressModel extends AbstractProgressModel {
 	private final class PhaseListener implements TaskListener {
 		public void taskEvent(TaskEvent event) {
 			synchronized(d_lock) {
@@ -38,7 +38,7 @@ public class TaskProgressModel extends AbstractProgressModel implements TextProg
 		setTask(task);
 	}
 
-	public void setTask(Task task) {
+	void setTask(Task task) {
 		if (d_task != null) {
 			d_task.removeTaskListener(d_taskListener);
 		}
