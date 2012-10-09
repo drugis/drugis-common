@@ -1,4 +1,4 @@
-package org.drugis.common.gui;
+package org.drugis.common.threading.status;
 
 import com.jgoodies.binding.beans.Observable;
 
