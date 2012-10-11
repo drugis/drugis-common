@@ -38,7 +38,7 @@ public class TaskProgressModel extends AbstractProgressModel {
 		setTask(task);
 	}
 
-	void setTask(Task task) {
+	public void setTask(Task task) {
 		if (d_task != null) {
 			d_task.removeTaskListener(d_taskListener);
 		}
