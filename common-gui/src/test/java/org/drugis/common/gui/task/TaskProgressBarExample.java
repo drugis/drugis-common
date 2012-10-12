@@ -23,7 +23,7 @@ import org.drugis.common.threading.activity.JoinTransition;
 import org.drugis.common.threading.activity.Transition;
 
 public class TaskProgressBarExample {
-	
+
 	static class LongComputation implements IterativeComputation {
 		private final int d_max;
 		private int d_step;
@@ -32,18 +32,18 @@ public class TaskProgressBarExample {
 			d_step = 0;
 		}
 		public void initialize() {}
-		public void step() { 
+		public void step() {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-			} 
+			}
 			++d_step;
 		}
 		public void finish() {}
 		public int getIteration() { return d_step; }
 		public int getTotalIterations() { return d_max; }
 	}
-	
+
 	public static void main(String[] args) {
 		Task start = new SimpleSuspendableTask(new Runnable() {
 			public void run() {
@@ -71,7 +71,7 @@ public class TaskProgressBarExample {
 		final ActivityTask test = new ActivityTask(actModel, "Testing");
 		TaskProgressBar taskProgressBar = new TaskProgressBar(test);
 		taskProgressBar.setPreferredSize(new Dimension(350, 20));
-		
+
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel jPanel = new JPanel();
@@ -82,7 +82,7 @@ public class TaskProgressBarExample {
 			public void actionPerformed(ActionEvent e) {
 				ThreadHandler.getInstance().scheduleTask(test);
 			}
-		
+
 		});
 		jPanel.add(jButton);
 		frame.add(jPanel);

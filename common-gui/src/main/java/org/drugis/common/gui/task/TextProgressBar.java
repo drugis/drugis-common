@@ -1,10 +1,12 @@
-package org.drugis.common.gui;
+package org.drugis.common.gui.task;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+
+import org.drugis.common.threading.status.TextProgressModel;
 
 @SuppressWarnings("serial")
 public class TextProgressBar extends JProgressBar {
