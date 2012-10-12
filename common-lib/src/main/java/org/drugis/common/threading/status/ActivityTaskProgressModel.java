@@ -1,4 +1,5 @@
 package org.drugis.common.threading.status;
+import static org.apache.commons.collections15.CollectionUtils.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections15.CollectionUtils;
 import org.apache.commons.collections15.PredicateUtils;
 import org.drugis.common.threading.IterativeTask;
 import org.drugis.common.threading.Task;
@@ -88,7 +88,7 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 
 	@SuppressWarnings("unchecked")
 	private Collection<? extends IterativeTask> findIterables(Collection<? extends Task> collection) {
-		return CollectionUtils.select(collection, PredicateUtils.instanceofPredicate(IterativeTask.class));
+		return select(collection, PredicateUtils.instanceofPredicate(IterativeTask.class));
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 		List<String> phaseStrings = new ArrayList<String>();
 		synchronized (d_lock) {
 			for (Task p : d_runningTasks) {
-				phaseStrings.add(p.toString() + ": " + formatProgress(d_progress.get(p)));
+				phaseStrings.add(p.toString() + ((p instanceof IterativeTask) ? ": " + formatProgress(d_progress.get(p)) : ""));
 			}
 		}
 		return phaseStrings;
@@ -115,7 +115,7 @@ public class ActivityTaskProgressModel extends AbstractProgressModel {
 
 	@Override
 	protected boolean calcDeterminate() {
-		return !CollectionUtils.intersection(d_runningTasks, d_iterables).isEmpty() || d_task.isFinished();
+		return !intersection(d_runningTasks, d_iterables).isEmpty() || d_task.isFinished();
 	}
 
 }
