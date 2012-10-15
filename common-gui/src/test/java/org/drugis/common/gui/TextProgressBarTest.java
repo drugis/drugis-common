@@ -7,6 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import org.drugis.common.beans.AbstractObservable;
+import org.drugis.common.gui.task.TextProgressBar;
+import org.drugis.common.threading.status.TextProgressModel;
 import org.junit.Test;
 
 public class TextProgressBarTest {
