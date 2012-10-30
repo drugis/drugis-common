@@ -51,7 +51,6 @@ public class TaskTerminatedModel extends AbstractValueModel implements TaskListe
 		throw new IllegalAccessError("TaskFinishedModel is read-only");
 	}
 
-	@Override
 	public void taskEvent(TaskEvent event) {
 		boolean oldval = d_val;
 		Task t = event.getSource();

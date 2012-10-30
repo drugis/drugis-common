@@ -15,12 +15,10 @@ public class ValueEqualsModel extends AbstractConverter {
 		d_expectedValue = expectedValue;
 	}
 
-	@Override
 	public void setValue(final Object newValue) {
 		throw new UnsupportedOperationException(getClass().getSimpleName() + " is read-only");
 	}
 
-	@Override
 	public Object convertFromSubject(final Object subjectValue) {
 		return EqualsUtil.equal(d_expectedValue, subjectValue);
 	}

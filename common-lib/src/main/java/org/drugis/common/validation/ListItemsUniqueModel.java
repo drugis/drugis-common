@@ -35,7 +35,6 @@ public class ListItemsUniqueModel<E extends Observable> extends AbstractValueMod
 		});
 	}
 
-	@Override
 	public Object getValue() {
 		return d_value;
 	}
@@ -52,7 +51,6 @@ public class ListItemsUniqueModel<E extends Observable> extends AbstractValueMod
 		return true;
 	}
 
-	@Override
 	public void setValue(Object newValue) {
 		throw new UnsupportedOperationException("ListItemsUniqueModel is read-only");
 	}

@@ -29,37 +29,30 @@ public abstract class WaitingTask implements Task {
 		d_mgr.fireTaskFinished();
 	}
 
-	@Override
 	public boolean isStarted() {
 		return d_started;
 	}
 
-	@Override
 	public boolean isFinished() {
 		return d_finished;
 	}
 
-	@Override
 	public boolean isFailed() {
 		return false;
 	}
 
-	@Override
 	public Throwable getFailureCause() {
 		return null;
 	}
 
-	@Override
 	public boolean isAborted() {
 		return false;
 	}
 	
-	@Override
 	public void addTaskListener(TaskListener l) {
 		d_mgr.addTaskListener(l);
 	}
 
-	@Override
 	public void removeTaskListener(TaskListener l) {
 		d_mgr.removeTaskListener(l);
 	}

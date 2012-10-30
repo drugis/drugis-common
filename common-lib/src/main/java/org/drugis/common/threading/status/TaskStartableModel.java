@@ -51,7 +51,6 @@ public class TaskStartableModel extends AbstractValueModel implements TaskListen
 		throw new IllegalAccessError("TaskStartableModel is read-only");
 	}
 
-	@Override
 	public void taskEvent(TaskEvent event) {
 		boolean oldval = d_val;
 		Task t = event.getSource();

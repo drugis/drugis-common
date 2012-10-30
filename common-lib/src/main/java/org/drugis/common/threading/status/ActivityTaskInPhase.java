@@ -66,7 +66,6 @@ public class ActivityTaskInPhase extends AbstractValueModel implements TaskListe
 		throw new IllegalAccessError("ActivityTaskInPhase is read-only");
 	}
 
-	@Override
 	public void taskEvent(TaskEvent event) {
 		boolean oldval = d_val;
 		Task eventSource = event.getSource();
