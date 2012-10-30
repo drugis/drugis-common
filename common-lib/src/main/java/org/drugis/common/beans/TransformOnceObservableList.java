@@ -22,19 +22,16 @@ public class TransformOnceObservableList<A, B> extends AbstractObservableList<B>
 			d_transformed.add(d_transform.transform(a));
 		}
 		d_nested.addListDataListener(new ListDataListener() {
-			@Override
 			public void intervalRemoved(final ListDataEvent evt) {
 				for (int i = evt.getIndex1(); i >= evt.getIndex0(); --i) {
 					d_transformed.remove(i);
 				}
 			}
-			@Override
 			public void intervalAdded(final ListDataEvent evt) {
 				for (int i = evt.getIndex0(); i <= evt.getIndex1(); ++i) {
 					d_transformed.add(i, d_transform.transform(d_nested.get(i)));
 				}
 			}
-			@Override
 			public void contentsChanged(final ListDataEvent evt) {
 				for (int i = evt.getIndex0(); i <= evt.getIndex1(); ++i) {
 					d_transformed.set(i, d_transform.transform(d_nested.get(i)));

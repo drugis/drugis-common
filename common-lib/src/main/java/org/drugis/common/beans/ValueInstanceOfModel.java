@@ -13,7 +13,6 @@ public class ValueInstanceOfModel extends AbstractConverter {
 		d_expectedClass = expectedClass;
 	}
 
-	@Override
 	public void setValue(final Object newValue) {
 		throw new UnsupportedOperationException(getClass().getSimpleName() + " is read-only");
 	}

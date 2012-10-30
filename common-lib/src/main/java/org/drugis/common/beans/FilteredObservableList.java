@@ -48,17 +48,14 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 		d_filter = filter;
 		initializeIndices();
 		d_inner.addListDataListener(new ListDataListener() {
-			@Override
 			public void intervalRemoved(final ListDataEvent e) {
 				FilteredObservableList.this.intervalRemoved(e.getIndex0(), e.getIndex1());
 			}
 
-			@Override
 			public void intervalAdded(final ListDataEvent e) {
 				FilteredObservableList.this.intervalAdded(e.getIndex0(), e.getIndex1());
 			}
 
-			@Override
 			public void contentsChanged(final ListDataEvent e) {
 				FilteredObservableList.this.contentsChanged(e.getIndex0(), e.getIndex1());
 			}
@@ -202,7 +199,6 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	 */
 	private int firstOver(final int x) {
 		final int last = findFirstIndex(d_indices, new Predicate<Integer>() {
-			@Override
 			public boolean evaluate(final Integer index) {
 				return index > x;
 			}
@@ -215,7 +211,6 @@ public class FilteredObservableList<E> extends AbstractObservableList<E> {
 	 */
 	private int firstAtLeast(final int x) {
 		final int first = findFirstIndex(d_indices, new Predicate<Integer>() {
-			@Override
 			public boolean evaluate(final Integer index) {
 				return index >= x;
 			}
